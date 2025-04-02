@@ -1,9 +1,13 @@
-<script setup>
-import { RouterLink, RouterView } from 'vue-router'
+~<script setup>
+import PokemonSets from './components/PokemonSets.vue';
 </script>
 
 <template>
-  <RouterView />
+  <div id="app">
+    <h1>Pokémon TCG Set Rarities</h1>
+    <PokemonSets />
+  </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+</style>
