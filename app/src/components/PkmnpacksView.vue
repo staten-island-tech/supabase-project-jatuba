@@ -2,16 +2,28 @@
   <div>
     <h2>Pokemon TCG Set Rarities</h2>
 
-    <label for="setSelector">Choose a Set:</label>
-    <select v-model="selectedSet">
-      <option v-for="set in sets" :key="set.id" :value="set.id">{{ set.name }}</option>
-    </select>
-    <button @click="openPack">Open Pack</button>
+    <div class="selector">
+      <label for="setSelector">Choose a Set:</label>
+      <select v-model="selectedSet" id="setSelector">
+        <option v-for="set in sets" :key="set.id" :value="set.id">
+          {{ set.name }}
+        </option>
+      </select>
+      <button @click="openPack">Open Pack</button>
+    </div>
 
-    <h3 v-if="pack.length">Your Pack</h3>
-    <ul v-if="pack.length">
-      <li v-for="card in pack" :key="card.id">{{ card.name }} - {{ card.rarity }}</li>
-    </ul>
+    <div v-if="pack.length" class="results">
+      <h3>Your Pack</h3>
+      <div class="card-list">
+        <div v-for="card in pack" :key="card.id" class="card-item">
+          <img :src="card.images.small" :alt="card.name" />
+          <div class="card-info">
+            <strong>{{ card.name }}</strong>
+            <span class="rarity">{{ card.rarity }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <h3>Skipped Sets</h3>
     <ul>
@@ -47,13 +59,12 @@ async function fetchSets() {
 
 async function fetchCardsForSet(setId, retries = 3) {
   try {
-    console.log(`Fetching cards for set: ${setId}`)
     const response = await fetch(`https://api.pokemontcg.io/v2/cards?q=set.id:${setId}`, {
       headers: { 'X-Api-Key': API_KEY },
     })
 
     if (!response.ok) {
-      console.error(`Error: API response failed for set ${setId}`)
+      console.error(`API response failed for set ${setId}`)
       return []
     }
 
@@ -157,14 +168,69 @@ onMounted(fetchRarities)
 h2,
 h3 {
   text-align: center;
+  color: #ffffff;
+  margin-top: 1rem;
 }
+
+body {
+  background-color: #121212;
+}
+
+.selector {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin: 20px 0;
+}
+
 select,
 button {
-  margin: 10px;
-  padding: 5px;
+  padding: 8px;
+  font-size: 1rem;
 }
+
+.card-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+  margin-top: 1rem;
+}
+
+.card-item {
+  background: #333;
+  border-radius: 10px;
+  padding: 0.5rem;
+  text-align: center;
+  width: 120px;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.3);
+  transition: transform 0.2s ease;
+}
+
+.card-item:hover {
+  transform: scale(1.05);
+}
+
+.card-item img {
+  width: 100%;
+  border-radius: 8px;
+}
+
+.card-info {
+  margin-top: 0.5rem;
+}
+
+.card-info .rarity {
+  display: block;
+  font-size: 0.9rem;
+  color: #ffa07a;
+}
+
 ul {
   list-style-type: none;
   padding: 0;
+  color: #ddd;
+  text-align: center;
 }
 </style>
