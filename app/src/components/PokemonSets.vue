@@ -15,10 +15,6 @@
         </tr>
       </tbody>
     </table>
-    <h3>Skipped Sets</h3>
-    <ul>
-      <li v-for="set in skippedSets" :key="set">{{ set }}</li>
-    </ul>
   </div>
 </template>
 
@@ -54,7 +50,6 @@ const POSSIBLE_RARITIES = [
 ]
 
 const sets = ref([])
-const skippedSets = ref([])
 
 async function fetchSets() {
   try {
@@ -93,18 +88,6 @@ async function fetchCardRaritiesForSet(setId, retries = 3) {
 
     const data = await response.json()
     console.log(`API Response for ${setId}:`, data)
-
-    if (!data.data || data.data.length === 0) {
-      console.warn(`Warning: No cards found for set ${setId}`)
-
-      if (retries > 0) {
-        console.log(`Retrying set ${setId} (${retries} attempts left)...`)
-        return fetchCardRaritiesForSet(setId, retries - 1)
-      }
-
-      skippedSets.value.push(setId)
-      return []
-    }
 
     let rarities = new Set()
     data.data.forEach((card) => {
