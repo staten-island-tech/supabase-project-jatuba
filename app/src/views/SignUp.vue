@@ -31,7 +31,6 @@ const signUp = async () => {
     return
   }
 
-  // Insert username into profiles
   const { error: profileError } = await supabase.from('profiles').insert([
     {
       id: userId,

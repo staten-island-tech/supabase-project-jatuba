@@ -34,4 +34,27 @@ const login = async () => {
     <button @click="login">Login</button>
     <p v-if="errorMsg" style="color: red">{{ errorMsg }}</p>
   </div>
+
+  <div>
+    <p>Don't have an account?</p>
+    <RouterLink to="/signup">
+      <button class="signup-button">Sign Up</button>
+    </RouterLink>
+  </div>
 </template>
+
+<style scoped>
+.signup-button {
+  padding: 0.5rem 1rem;
+  background-color: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.signup-button:hover {
+  background-color: #2563eb;
+}
+</style>
