@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <div v-for="(sets, generation) in generations" :key="generation" class="generation-section">
-      <h2>{{ generation }}</h2>
+      <h2 class="generation-title">{{ generation }}</h2>
       <div class="set-grid">
         <div v-for="set in sets" :key="set.id" class="set-card">
           <img :src="set.images.symbol" :alt="set.name" loading="lazy" />
@@ -31,8 +31,8 @@ const pack = ref([])
 
 async function fetchAllSets() {
   const response = await fetch('https://api.pokemontcg.io/v2/sets')
-  const result = await response.json()
-  const sets = result.data
+  const data = await response.json()
+  const sets = data.data
 
   const genStructure = {}
   for (const set of sets) {
@@ -44,49 +44,55 @@ async function fetchAllSets() {
 }
 
 function getGenerationName(set) {
-  const id = set.id
+  const id = set.id.toLowerCase()
   if (/base|jungle|fossil|teamrocket|base2|promo/i.test(id)) return 'Base'
-  if (/gym/i.test(id)) return 'Gym'
-  if (/southern/i.test(id)) return 'Southern Islands'
-  if (/neo/i.test(id)) return 'Neo'
-  if (/legendarycollection/i.test(id)) return 'Legendary Collection'
-  if (/ecard|expedition|aquapolis|skyridge/i.test(id)) return 'E-Card'
-  if (/ex|emerald|delta|holon|crystal|powerkeepers/i.test(id)) return 'Ruby and Sapphire'
-  if (/pop/i.test(id)) return 'POP'
-  if (/dp|platinum|rumble/i.test(id)) return 'Diamond and Pearl'
-  if (/hgss|calloflegends/i.test(id)) return 'HeartGold & SoulSilver'
+  if (/gym/.test(id)) return 'Gym'
+  if (/southern/.test(id)) return 'Southern Islands'
+  if (/neo/.test(id)) return 'Neo'
+  if (/legendarycollection/.test(id)) return 'Legendary Collection'
+  if (/ecard|expedition|aquapolis|skyridge/.test(id)) return 'E-Card'
+  if (/ex|emerald|delta|holon|crystal|powerkeepers/.test(id)) return 'Ruby and Sapphire'
+  if (/pop/.test(id)) return 'POP'
+  if (/dp|platinum|rumble/.test(id)) return 'Diamond and Pearl'
+  if (/hgss|calloflegends/.test(id)) return 'HeartGold & SoulSilver'
+
   if (
-    /sv|151|paradox|paldea|obsidian|temporal|twilight|shrouded|stellar|surging|prismatic/i.test(id)
+    /sv|151|paradox|paldea|obsidian|temporal|twilight|shrouded|stellar|surging|prismatic/.test(id)
   )
     return 'Scarlet and Violet'
+
   if (
-    /swsh|vivid|evolving|fusion|celebrations|chilling|rebel|darkness|shining|battle|go|brilliant|astral|lost|silver|crown/i.test(
+    /swsh|vivid|evolving|fusion|celebrations|chilling|rebel|darkness|shining|battle|go|brilliant|astral|lost|silver|crown/.test(
       id,
     )
   )
     return 'Sword and Shield'
+
   if (
-    /sm|detective|shining|burning|guardians|unbroken|teamup|dragon|celestial|forbidden|ultra|cosmic|hidden|unified|lostthunder/i.test(
+    /sm|detective|shining|burning|guardians|unbroken|teamup|dragon|celestial|forbidden|ultra|cosmic|hidden|unified|lostthunder/.test(
       id,
     )
   )
     return 'Sun and Moon'
+
   if (
-    /xy|kalos|evolutions|fates|generations|break|steam|roaring|primal|phantom|furious|flashfire/i.test(
+    /xy|kalos|evolutions|fates|generations|break|steam|roaring|primal|phantom|furious|flashfire/.test(
       id,
     )
   )
     return 'XY'
-  if (/bw|noble|next|emerging|dark|plasma|boundaries|dragonvault|legendarytreasures/i.test(id))
+
+  if (/bw|noble|next|emerging|dark|plasma|boundaries|dragonvault|legendarytreasures/.test(id))
     return 'Black and White'
-  if (/mcdonald/i.test(id)) return 'McDonald’s'
+
+  if (/mcdonald/.test(id)) return "McDonald's"
   return 'Others'
 }
 
 async function fetchCardsForSet(setId) {
   const response = await fetch(`https://api.pokemontcg.io/v2/cards?q=set.id:${setId}`)
-  const result = await response.json()
-  return result.data || []
+  const data = await response.json()
+  return data.data || []
 }
 
 function categorizeCards(cards) {
@@ -124,21 +130,27 @@ async function openPack(setId) {
 
   const categorized = categorizeCards(cards)
 
-  for (let i = 0; i < 3; i++) {
-    const card = getRandomCard([...categorized.common, ...categorized.uncommon])
+  // 5 Common
+  for (let i = 0; i < 5; i++) {
+    const card = getRandomCard(categorized.common)
     if (card) pack.value.push(card)
   }
 
-  const rareCard = getRandomCard(categorized.rare)
+  // 2 Uncommon
+  for (let i = 0; i < 2; i++) {
+    const card = getRandomCard(categorized.uncommon)
+    if (card) pack.value.push(card)
+  }
+
+  // 1 Rare or higher
+  const rareOrHolo = [...categorized.rare, ...categorized.rareHolo]
+  const rareCard = getRandomCard(rareOrHolo)
   if (rareCard) pack.value.push(rareCard)
 
-  const rareHoloCard = getRandomCard(categorized.rareHolo)
-  if (rareHoloCard) pack.value.push(rareHoloCard)
-
-  const finalCard =
-    Math.random() < 0.15 && categorized.unique.length
-      ? getRandomCard(categorized.unique)
-      : getRandomCard(categorized.rareHolo)
+  // 1 Unique (or fallback)
+  const finalCard = categorized.unique.length
+    ? getRandomCard(categorized.unique)
+    : getRandomCard(rareOrHolo)
   if (finalCard) pack.value.push(finalCard)
 }
 
@@ -151,6 +163,13 @@ fetchAllSets()
   background-color: #1a1a1a;
   color: white;
   font-family: Arial, sans-serif;
+  text-align: center;
+}
+
+.generation-title {
+  font-size: 24px;
+  margin: 32px 0 16px;
+  text-align: center;
 }
 
 .generation-section {
@@ -159,6 +178,7 @@ fetchAllSets()
 
 .set-grid {
   display: flex;
+  justify-content: center;
   flex-wrap: wrap;
   gap: 16px;
 }
@@ -170,6 +190,10 @@ fetchAllSets()
   text-align: center;
   width: 180px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 .set-card img {
@@ -184,6 +208,7 @@ fetchAllSets()
   padding: 6px 12px;
   border-radius: 4px;
   cursor: pointer;
+  margin-top: 6px;
 }
 
 .results {
@@ -193,6 +218,7 @@ fetchAllSets()
 .results ul {
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
   gap: 12px;
   padding: 0;
   list-style: none;
