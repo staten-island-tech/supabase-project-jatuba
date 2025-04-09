@@ -1,44 +1,19 @@
-<!-- src/views/HomeView.vue -->
 <script setup>
-import { ref, onMounted } from 'vue'
-import { supabase } from '../supabase'
+import { onMounted } from 'vue'
+import { useUserStore } from '@/stores/user.js'
 
-const username = ref('')
-const loading = ref(true)
-const errorMsg = ref('')
+const userStore = useUserStore()
 
-onMounted(async () => {
-  const {
-    data: { user },
-    error: authError,
-  } = await supabase.auth.getUser()
-
-  if (authError || !user) {
-    errorMsg.value = 'User not logged in.'
-    loading.value = false
-    return
-  }
-
-  const { data: profile, error: profileError } = await supabase
-    .from('profiles')
-    .select('username')
-    .eq('id', user.id)
-    .single()
-
-  if (profileError) {
-    errorMsg.value = profileError.message
-  } else {
-    username.value = profile.username
-  }
-
-  loading.value = false
+onMounted(() => {
+  userStore.fetchUser()
 })
 </script>
 
 <template>
-  <div v-if="loading">Loading...</div>
-  <div v-else-if="errorMsg">Error: {{ errorMsg }}</div>
+  <div v-if="userStore.profile">
+    <h1>Welcome, {{ userStore.profile.username }}!</h1>
+  </div>
   <div v-else>
-    <h2>Welcome, {{ username }}!</h2>
+    <p>Loading your profile...</p>
   </div>
 </template>
