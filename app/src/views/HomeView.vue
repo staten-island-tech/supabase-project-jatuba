@@ -1,75 +1,49 @@
 <template>
-  <div class="container">
-    <h1>Pokemon Digi TCG</h1>
-    <div class="button-container">
-      <router-link to="/set">
-        <button>View All Sets</button>
-      </router-link>
+  <div class="home-container">
+    <h1>Welcome to the Pokémon Pack Opener</h1>
+    <p>Open booster packs and discover cards from all generations!</p>
 
-      <router-link to="/pack">
-        <button>View All Packs</button>
-      </router-link>
-    </div>
+    <router-link to="/packs">
+      <button>Start Opening Packs</button>
+    </router-link>
+
+    <router-link to="/set">
+      <button>View All Sets</button>
+    </router-link>
   </div>
 </template>
 
 <script setup></script>
 
-<style scoped>
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-html,
-body {
-  height: 100%;
+<style>
+.home-container {
+  padding: 40px;
+  text-align: center;
+  color: white;
+  background-color: #1a1a1a;
+  height: 100vh;
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 h1 {
+  font-size: 36px;
   margin-bottom: 20px;
+}
+
+p {
+  font-size: 18px;
+  margin-bottom: 32px;
 }
 
 button {
-  padding: 10px 20px;
-  background-color: blue;
-  color: white;
-  border-radius: 0.5rem;
+  font-size: 16px;
+  padding: 12px 24px;
+  background-color: orange;
+  border: none;
+  border-radius: 6px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-button:hover {
-  background-color: darkblue;
-}
-
-h2 {
-  margin-bottom: 20px;
-}
-
-.container {
-  display: flex;
-  flex-direction: column;
-
-  height: auto;
-  width: 80vw;
-
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-
-  padding: 20px;
-  margin: 0 auto;
-}
-
-.button-container {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 15px;
-  justify-content: center;
-  margin-bottom: 30px;
 }
 </style>

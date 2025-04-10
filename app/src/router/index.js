@@ -1,12 +1,12 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
-import PkmnpacksView from '@/components/PkmnpacksView.vue'
+import HomeView from '@/views/HomeView.vue'
+import PkmnPacksView from '@/views/PkmnPacksView.vue'
 import SetView from '@/views/SetView.vue'
 
 const routes = [
-  { path: '/', component: HomeView },
-  { path: '/set', component: SetView },
-  { path: '/pack', component: PkmnpacksView },
+  { path: '/', name: 'Home', component: HomeView },
+  { path: '/packs', name: 'Packs', component: PkmnPacksView },
+  { path: '/set', name: 'Sets', component: SetView },
 ]
 
 const router = createRouter({
