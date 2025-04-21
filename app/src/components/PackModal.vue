@@ -20,7 +20,7 @@ defineProps({
 })
 </script>
 
-<style>
+<style scoped>
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -33,6 +33,7 @@ defineProps({
   align-items: center;
   z-index: 999;
 }
+
 .modal-content {
   background-color: #222;
   color: white;
@@ -44,6 +45,7 @@ defineProps({
   overflow-y: auto;
   text-align: center;
 }
+
 .modal-results {
   display: flex;
   flex-wrap: wrap;
@@ -53,16 +55,19 @@ defineProps({
   padding: 0;
   margin: 20px 0;
 }
+
 .modal-results li {
   background: #333;
   padding: 8px;
   border-radius: 6px;
   width: 150px;
 }
+
 .modal-results img {
   width: 100%;
   margin-bottom: 6px;
 }
+
 .close-btn {
   background: orange;
   border: none;
