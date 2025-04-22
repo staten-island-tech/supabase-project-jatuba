@@ -9,7 +9,7 @@ const routes = [
   { path: '/home', component: HomeView },
   { path: '/signup', component: SignUp },
   { path: '/login', component: UserLogin },
-  { path: '/auth/callback', component: UserAuth },
+  { path: '/auth', component: UserAuth },
 ]
 
 export default createRouter({
