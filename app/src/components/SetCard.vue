@@ -16,17 +16,26 @@ gsap.registerPlugin(ScrollTrigger)
 const card = ref(null)
 
 onMounted(() => {
-  gsap.from(card.value, {
-    scrollTrigger: {
-      trigger: card.value,
-      start: 'top 90%',
-      toggleActions: 'play none none none',
+  gsap.fromTo(
+    card.value,
+    {
+      opacity: 0,
+      y: 50,
     },
-    opacity: 0,
-    y: 50,
-    duration: 0.8,
-    ease: 'power2.out',
-  })
+    {
+      opacity: 1,
+      y: 0,
+      duration: 0.8,
+      ease: 'power2.out',
+      scrollTrigger: {
+        trigger: card.value,
+        start: 'top 90%',
+        end: 'bottom 10%',
+        toggleActions: 'play reverse play reverse',
+        markers: false,
+      },
+    },
+  )
 })
 
 defineProps({
@@ -56,11 +65,18 @@ defineProps({
   cursor: pointer;
   font-weight: bold;
   color: black;
-  transition: background-color 0.2s;
+  transition:
+    background-color 0.2s,
+    transform 0.2s;
 }
 
 .open-button:hover {
   background-color: #ffae00;
+  transform: scale(1.05);
+}
+
+.open-button:active {
+  transform: scale(0.95);
 }
 
 img {

@@ -30,20 +30,28 @@ export function usePokemonPacks() {
   const generations = ref({})
   const pack = ref([])
   const showModal = ref(false)
+  const loading = ref(false) // 🆕 spinner state
 
   async function fetchAllSets() {
-    const response = await fetch('https://api.pokemontcg.io/v2/sets')
-    const data = await response.json()
-    const sets = data.data
+    loading.value = true
+    try {
+      const response = await fetch('https://api.pokemontcg.io/v2/sets')
+      const data = await response.json()
+      const sets = data.data
 
-    const grouped = {}
-    for (const set of sets) {
-      const gen = set.series || 'Others'
-      if (!grouped[gen]) grouped[gen] = []
-      grouped[gen].push(set)
+      const grouped = {}
+      for (const set of sets) {
+        const gen = set.series || 'Others'
+        if (!grouped[gen]) grouped[gen] = []
+        grouped[gen].push(set)
+      }
+
+      generations.value = grouped
+    } catch (e) {
+      console.error('Error fetching sets:', e)
+    } finally {
+      loading.value = false
     }
-
-    generations.value = grouped
   }
 
   async function fetchCardsForSet(setId) {
@@ -53,32 +61,39 @@ export function usePokemonPacks() {
   }
 
   async function openPack(setId) {
-    const cards = await fetchCardsForSet(setId)
-    const categorized = categorizeCards(cards)
-    const opened = []
+    loading.value = true
+    try {
+      const cards = await fetchCardsForSet(setId)
+      const categorized = categorizeCards(cards)
+      const opened = []
 
-    for (let i = 0; i < 5; i++) {
-      const card = getRandomCard(categorized.common)
-      if (card) opened.push(card)
+      for (let i = 0; i < 5; i++) {
+        const card = getRandomCard(categorized.common)
+        if (card) opened.push(card)
+      }
+
+      for (let i = 0; i < 2; i++) {
+        const card = getRandomCard(categorized.uncommon)
+        if (card) opened.push(card)
+      }
+
+      const rareOrHolo = [...categorized.rare, ...categorized.rareHolo]
+      const rareCard = getRandomCard(rareOrHolo)
+      if (rareCard) opened.push(rareCard)
+
+      const finalCard = categorized.unique.length
+        ? getRandomCard(categorized.unique)
+        : getRandomCard(rareOrHolo)
+
+      if (finalCard) opened.push(finalCard)
+
+      pack.value = opened
+      showModal.value = true
+    } catch (e) {
+      console.error('Error opening pack:', e)
+    } finally {
+      loading.value = false
     }
-
-    for (let i = 0; i < 2; i++) {
-      const card = getRandomCard(categorized.uncommon)
-      if (card) opened.push(card)
-    }
-
-    const rareOrHolo = [...categorized.rare, ...categorized.rareHolo]
-    const rareCard = getRandomCard(rareOrHolo)
-    if (rareCard) opened.push(rareCard)
-
-    const finalCard = categorized.unique.length
-      ? getRandomCard(categorized.unique)
-      : getRandomCard(rareOrHolo)
-
-    if (finalCard) opened.push(finalCard)
-
-    pack.value = opened
-    showModal.value = true
   }
 
   return {
@@ -87,5 +102,6 @@ export function usePokemonPacks() {
     showModal,
     fetchAllSets,
     openPack,
+    loading, // 🆕 returned for use in the view
   }
 }
