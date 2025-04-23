@@ -26,6 +26,7 @@ const signUp = async () => {
   }
 
   const userId = data.user?.id
+
   if (!userId) {
     errorMsg.value = 'Signup succeeded, but no user ID returned.'
     return
