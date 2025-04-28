@@ -15,34 +15,45 @@ const signUp = async () => {
   errorMsg.value = ''
   successMsg.value = ''
 
-  const { data, error } = await supabase.auth.signUp({
-    email: email.value,
-    password: password.value,
-  })
+  supabase.auth
+    .signUp({
+      email: email.value,
+      password: password.value,
+    })
+    .then(({ data, error }) => {
+      const userId = data.user?.id
+      if (error) {
+        errorMsg.value = error.message
+        return
+      }
+      if (!userId) {
+        errorMsg.value = 'Signup succeeded, but no user ID returned.'
+      }
+      insertUser(userId)
+    })
+}
 
-  if (error) {
-    errorMsg.value = error.message
-    return
-  }
+const insertUser = async (userId) => {
+  supabase
+    .from('profiles')
+    .insert([
+      {
+        id: userId,
+        username: username.value,
+      },
+    ])
+    .then(({ error: profileError }) => {
+      if (profileError) {
+        errorMsg.value = profileError.message // <- small fix here too
+        return
+      }
 
-  const userId = data.user?.id
-
-  if (!userId) {
-    errorMsg.value = 'Signup succeeded, but no user ID returned.'
-    return
-  }
-
-  const { error: profileError } = await supabase.from('profiles').insert([
-    {
-      id: userId,
-      username: username.value,
-    },
-  ])
-
-  if (profileError) {
-    errorMsg.value = profileError.message
-    return
-  }
+      console.log('Profile inserted successfully')
+      // You can do more actions here, like redirecting
+    })
+    .catch((err) => {
+      console.error('Unexpected error inserting profile:', err.message)
+    })
 
   successMsg.value = 'Account created! Redirecting...'
   setTimeout(() => router.push('/home'), 1500)

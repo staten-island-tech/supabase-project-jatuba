@@ -11,7 +11,7 @@ onMounted(() => {
 
 <template>
   <div v-if="userStore.profile">
-    <h1>Welcome, {{ userStore.profile.username }}!</h1>
+    <h1>Welcome{{ userStore.profile.username }}!</h1>
   </div>
   <div v-else>
     <p>Loading your profile...</p>
