@@ -30,7 +30,7 @@ export function usePokemonPacks() {
   const generations = ref({})
   const pack = ref([])
   const showModal = ref(false)
-  const loading = ref(false) // 🆕 spinner state
+  const loading = ref(false)
 
   async function fetchAllSets() {
     loading.value = true
@@ -102,6 +102,6 @@ export function usePokemonPacks() {
     showModal,
     fetchAllSets,
     openPack,
-    loading, // 🆕 returned for use in the view
+    loading,
   }
 }
