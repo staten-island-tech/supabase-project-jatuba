@@ -1,74 +1,48 @@
-<!-- src/views/UserSignup.vue -->
-<script setup>
-import { ref } from 'vue'
-import { supabase } from '../supabase'
-import { useRouter } from 'vue-router'
-
-const email = ref('')
-const password = ref('')
-const username = ref('')
-const errorMsg = ref('')
-const successMsg = ref('')
-const router = useRouter()
-
-const signUp = async () => {
-  errorMsg.value = ''
-  successMsg.value = ''
-
-  supabase.auth
-    .signUp({
-      email: email.value,
-      password: password.value,
-    })
-    .then(({ data, error }) => {
-      const userId = data.user?.id
-      if (error) {
-        errorMsg.value = error.message
-        return
-      }
-      if (!userId) {
-        errorMsg.value = 'Signup succeeded, but no user ID returned.'
-      }
-      insertUser(userId)
-    })
-}
-
-const insertUser = async (userId) => {
-  supabase
-    .from('profiles')
-    .insert([
-      {
-        id: userId,
-        username: username.value,
-      },
-    ])
-    .then(({ error: profileError }) => {
-      if (profileError) {
-        errorMsg.value = profileError.message // <- small fix here too
-        return
-      }
-
-      console.log('Profile inserted successfully')
-      // You can do more actions here, like redirecting
-    })
-    .catch((err) => {
-      console.error('Unexpected error inserting profile:', err.message)
-    })
-
-  successMsg.value = 'Account created! Redirecting...'
-  setTimeout(() => router.push('/home'), 1500)
-}
-</script>
-
 <template>
   <div>
     <h2>Sign Up</h2>
-    <input v-model="email" placeholder="Email" />
-    <input v-model="username" placeholder="Username" />
-    <input v-model="password" type="password" placeholder="Password" />
-    <button @click="signUp">Sign Up</button>
-
-    <p v-if="errorMsg" style="color: red">{{ errorMsg }}</p>
-    <p v-if="successMsg" style="color: green">{{ successMsg }}</p>
+    <form @submit.prevent="signUp">
+      <input type="email" v-model="email" placeholder="Email" required />
+      <input type="text" v-model="username" placeholder="Username" required />
+      <input type="password" v-model="password" placeholder="Password" required />
+      <button type="submit">Sign Up</button>
+    </form>
   </div>
 </template>
+
+<script>
+import { supabase } from '../supabase'
+
+export default {
+  data() {
+    return {
+      email: '',
+      username: '',
+      password: '',
+    }
+  },
+  methods: {
+    async signUp() {
+      const { user, error } = await supabase.auth.signUp({
+        email: this.email,
+        password: this.password,
+      })
+
+      if (error) {
+        console.error('Error signing up:', error.message)
+      } else {
+        // After sign-up, create the profile in the database with username
+        const { data, error: profileError } = await supabase
+          .from('profiles')
+          .insert([{ user_id: user.id, username: this.username }])
+
+        if (profileError) {
+          console.error('Error creating profile:', profileError.message)
+        } else {
+          this.$router.push('/profile') // Redirect to profile page
+        }
+      }
+    },
+  },
+}
+</script>
