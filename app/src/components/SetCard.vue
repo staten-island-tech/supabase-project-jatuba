@@ -7,39 +7,64 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onUnmounted, nextTick } from 'vue'
 import gsap from 'gsap'
 import ScrollTrigger from 'gsap/ScrollTrigger'
 
 gsap.registerPlugin(ScrollTrigger)
 
 const card = ref(null)
+defineProps({ set: Object })
 
-onMounted(() => {
-  gsap.fromTo(
-    card.value,
-    {
-      opacity: 0,
-      y: 50,
-    },
-    {
-      opacity: 1,
-      y: 0,
-      duration: 0.8,
-      ease: 'power2.out',
-      scrollTrigger: {
-        trigger: card.value,
-        start: 'top 90%',
-        end: 'bottom 10%',
-        toggleActions: 'play reverse play reverse',
-        markers: false,
-      },
-    },
-  )
+let st
+onMounted(async () => {
+  await nextTick()
+
+  gsap.set(card.value, { opacity: 0, y: 50 })
+
+  st = ScrollTrigger.create({
+    trigger: card.value,
+    start: 'top 90%',
+    end: 'bottom 10%',
+
+    onEnter: () =>
+      gsap.to(card.value, {
+        opacity: 1,
+        y: 0,
+        duration: 0.8,
+        ease: 'power2.out',
+        delay: 0.15,
+      }),
+
+    onLeave: () =>
+      gsap.to(card.value, {
+        opacity: 0,
+        y: 50,
+        duration: 0.6,
+        ease: 'power2.in',
+      }),
+
+    onEnterBack: () =>
+      gsap.to(card.value, {
+        opacity: 1,
+        y: 0,
+        duration: 0.8,
+        ease: 'power2.out',
+        delay: 0.15,
+      }),
+
+    onLeaveBack: () =>
+      gsap.to(card.value, {
+        opacity: 0,
+        y: 50,
+        duration: 0.6,
+        ease: 'power2.in',
+      }),
+  })
 })
 
-defineProps({
-  set: Object,
+onUnmounted(() => {
+  st && st.kill()
 })
 </script>
 
@@ -55,6 +80,8 @@ defineProps({
   width: 200px;
   text-align: center;
   margin: 10px;
+
+  will-change: transform, opacity;
 }
 
 .open-button {
@@ -80,8 +107,8 @@ defineProps({
 }
 
 img {
-  height: auto;
   width: 70%;
+  height: auto;
   margin-bottom: 10px;
 }
 

@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <div v-if="loading" class="spinner-container">
+    <div v-if="loading && !showModal" class="spinner-container">
       <div class="spinner"></div>
     </div>
 
@@ -10,24 +10,43 @@
       <div v-for="(sets, gen) in generations" :key="gen" class="generation-section">
         <h2 class="generation-title">{{ gen }}</h2>
         <div class="set-grid">
-          <SetCard v-for="set in sets" :key="set.id" :set="set" @open="openPack(set.id)" />
+          <SetCard v-for="set in sets" :key="set.id" :set="set" @open="handleOpen(set.id)" />
         </div>
       </div>
     </div>
 
     <Transition name="fade">
-      <PackModal v-if="showModal" :pack="pack" @close="showModal = false" />
+      <PackModal
+        v-if="showModal"
+        :pack="pack"
+        :loading="loading"
+        @close="showModal = false"
+        @open-another="handleOpenAnother"
+      />
     </Transition>
   </div>
 </template>
 
 <script setup>
-import { onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import { usePokemonPacks } from '@/composables/usePokemonPacks'
 import SetCard from '@/components/SetCard.vue'
 import PackModal from '@/components/PackModal.vue'
 
 const { generations, pack, showModal, fetchAllSets, openPack, loading } = usePokemonPacks()
+
+const currentSetId = ref(null)
+
+function handleOpen(setId) {
+  currentSetId.value = setId
+  openPack(setId)
+}
+
+function handleOpenAnother() {
+  if (currentSetId.value) {
+    openPack(currentSetId.value)
+  }
+}
 
 onMounted(fetchAllSets)
 </script>
@@ -57,7 +76,6 @@ onMounted(fetchAllSets)
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
-
 @keyframes spin {
   to {
     transform: rotate(360deg);
@@ -67,7 +85,6 @@ onMounted(fetchAllSets)
 .generation-title {
   font-size: 24px;
   margin: 32px 0 16px;
-  text-align: center;
 }
 
 .set-grid {
