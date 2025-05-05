@@ -1,90 +1,50 @@
 <template>
   <div class="app-container">
-    <div v-if="loading && !showModal" class="spinner-container">
-      <div class="spinner"></div>
-    </div>
+    <h1>Choose a Set</h1>
 
-    <div v-else>
-      <h1>Choose a Set</h1>
+    <div v-if="loading" class="spinner"></div>
 
-      <div v-for="(sets, gen) in generations" :key="gen" class="generation-section">
-        <h2 class="generation-title">{{ gen }}</h2>
-        <div class="set-grid">
-          <SetCard v-for="set in sets" :key="set.id" :set="set" @open="handleOpen(set.id)" />
-        </div>
+    <div v-for="(sets, gen) in generations" :key="gen" class="generation-section">
+      <h2 class="generation-title">{{ gen }}</h2>
+      <div class="set-grid">
+        <SetCard
+          v-for="(set, index) in sets"
+          :key="set.id"
+          :set="set"
+          :index="index"
+          @open="openPack(set.id)"
+        />
       </div>
     </div>
 
-    <Transition name="fade">
-      <PackModal
-        v-if="showModal"
-        :pack="pack"
-        :loading="loading"
-        @close="showModal = false"
-        @open-another="handleOpenAnother"
-      />
-    </Transition>
+    <PackModal v-if="showModal" :pack="pack" @close="showModal = false" />
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { onMounted } from 'vue'
 import { usePokemonPacks } from '@/composables/usePokemonPacks'
 import SetCard from '@/components/SetCard.vue'
 import PackModal from '@/components/PackModal.vue'
 
-const { generations, pack, showModal, fetchAllSets, openPack, loading } = usePokemonPacks()
-
-const currentSetId = ref(null)
-
-function handleOpen(setId) {
-  currentSetId.value = setId
-  openPack(setId)
-}
-
-function handleOpenAnother() {
-  if (currentSetId.value) {
-    openPack(currentSetId.value)
-  }
-}
+const { generations, pack, showModal, loading, fetchAllSets, openPack } = usePokemonPacks()
 
 onMounted(fetchAllSets)
 </script>
 
-<style scoped>
+<style>
 .app-container {
   padding: 20px;
   background-color: #1a1a1a;
   color: white;
   font-family: Arial, sans-serif;
   text-align: center;
-  min-height: 100vh;
-}
-
-.spinner-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-}
-
-.spinner {
-  width: 50px;
-  height: 50px;
-  border: 6px solid #ccc;
-  border-top-color: orange;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
 }
 
 .generation-title {
   font-size: 24px;
   margin: 32px 0 16px;
+  text-align: center;
 }
 
 .set-grid {
@@ -95,13 +55,22 @@ onMounted(fetchAllSets)
   gap: 16px;
 }
 
-.fade-enter-active,
-.fade-leave-active {
-  transition: all 0.4s ease;
+.spinner {
+  border: 6px solid #f3f3f3;
+  border-top: 6px solid orange;
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  animation: spin 1s linear infinite;
+  margin: 40px auto;
 }
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
-  transform: scale(0.9);
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 </style>

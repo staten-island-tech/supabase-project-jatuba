@@ -31,7 +31,7 @@ onMounted(async () => {
       gsap.to(card.value, {
         opacity: 1,
         y: 0,
-        duration: 0.8,
+        duration: 0.5,
         ease: 'power2.out',
         delay: 0.15,
       }),
@@ -40,7 +40,7 @@ onMounted(async () => {
       gsap.to(card.value, {
         opacity: 0,
         y: 50,
-        duration: 0.6,
+        duration: 0.5,
         ease: 'power2.in',
       }),
 
@@ -48,7 +48,7 @@ onMounted(async () => {
       gsap.to(card.value, {
         opacity: 1,
         y: 0,
-        duration: 0.8,
+        duration: 0.5,
         ease: 'power2.out',
         delay: 0.15,
       }),
@@ -57,7 +57,7 @@ onMounted(async () => {
       gsap.to(card.value, {
         opacity: 0,
         y: 50,
-        duration: 0.6,
+        duration: 0.5,
         ease: 'power2.in',
       }),
   })
