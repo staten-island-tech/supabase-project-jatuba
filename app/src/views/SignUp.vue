@@ -31,15 +31,12 @@ export default {
       if (error) {
         console.error('Error signing up:', error.message)
       } else {
-        // After sign-up, create the profile in the database with username
-        const { data, error: profileError } = await supabase
-          .from('profiles')
-          .insert([{ user_id: user.id, username: this.username }])
+        const { data, error: profileError } = await supabase.from('profiles')
 
         if (profileError) {
           console.error('Error creating profile:', profileError.message)
         } else {
-          this.$router.push('/profile') // Redirect to profile page
+          this.$router.push('/auth') // Redirect to profile page
         }
       }
     },
