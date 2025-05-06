@@ -7,7 +7,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted, nextTick } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import gsap from 'gsap'
 import ScrollTrigger from 'gsap/ScrollTrigger'
 
@@ -17,54 +17,37 @@ const card = ref(null)
 defineProps({ set: Object })
 
 let st
-onMounted(async () => {
-  await nextTick()
-
-  gsap.set(card.value, { opacity: 0, y: 50 })
-
+onMounted(() => {
   st = ScrollTrigger.create({
     trigger: card.value,
-    start: 'top 90%',
-    end: 'bottom 10%',
+    start: 'top bottom',
+    end: 'bottom top',
+    scrub: true,
+    onUpdate: (self) => {
+      const element = card.value
+      const rect = element.getBoundingClientRect()
+      const windowHeight = window.innerHeight
 
-    onEnter: () =>
-      gsap.to(card.value, {
-        opacity: 1,
-        y: 0,
-        duration: 0.5,
-        ease: 'power2.out',
-        delay: 0.15,
-      }),
+      const elementCenter = rect.top + rect.height / 2
+      const distanceToCenter = Math.abs(windowHeight / 2 - elementCenter)
 
-    onLeave: () =>
-      gsap.to(card.value, {
-        opacity: 0,
-        y: 50,
-        duration: 0.5,
-        ease: 'power2.in',
-      }),
+      const maxDistance = windowHeight / 2
+      const norm = Math.min(distanceToCenter / maxDistance, 1)
 
-    onEnterBack: () =>
-      gsap.to(card.value, {
-        opacity: 1,
-        y: 0,
-        duration: 0.5,
-        ease: 'power2.out',
-        delay: 0.15,
-      }),
+      const eased = 1 - Math.pow(norm, 2)
 
-    onLeaveBack: () =>
-      gsap.to(card.value, {
-        opacity: 0,
-        y: 50,
-        duration: 0.5,
-        ease: 'power2.in',
-      }),
+      gsap.to(element, {
+        opacity: eased,
+        y: (1 - eased) * 60,
+        duration: 0.1,
+        overwrite: 'auto',
+      })
+    },
   })
 })
 
 onUnmounted(() => {
-  st && st.kill()
+  st?.kill()
 })
 </script>
 
