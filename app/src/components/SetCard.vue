@@ -16,38 +16,39 @@ gsap.registerPlugin(ScrollTrigger)
 const card = ref(null)
 defineProps({ set: Object })
 
-let st
+let scrollTween
+
 onMounted(() => {
-  st = ScrollTrigger.create({
-    trigger: card.value,
+  const element = card.value
+
+  scrollTween = ScrollTrigger.create({
+    trigger: element,
     start: 'top bottom',
     end: 'bottom top',
     scrub: true,
     onUpdate: (self) => {
-      const element = card.value
       const rect = element.getBoundingClientRect()
-      const windowHeight = window.innerHeight
-
+      const centerY = window.innerHeight / 2
       const elementCenter = rect.top + rect.height / 2
-      const distanceToCenter = Math.abs(windowHeight / 2 - elementCenter)
+      const distance = Math.abs(centerY - elementCenter)
+      const maxDistance = window.innerHeight / 2
 
-      const maxDistance = windowHeight / 2
-      const norm = Math.min(distanceToCenter / maxDistance, 1)
-
-      const eased = 1 - Math.pow(norm, 2)
+      const progress = Math.min(distance / maxDistance, 1)
+      const eased = 1 - Math.pow(progress, 2) // quadratic easing toward center
 
       gsap.to(element, {
-        opacity: eased,
-        y: (1 - eased) * 60,
-        duration: 0.1,
+        scale: 0.85 + 0.15 * eased,
+        opacity: 0.4 + 0.6 * eased,
         overwrite: 'auto',
+        duration: 0.2,
+        ease: 'power2.out',
       })
     },
   })
 })
 
 onUnmounted(() => {
-  st?.kill()
+  scrollTween.kill()
 })
 </script>
 
