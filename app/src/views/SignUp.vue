@@ -19,7 +19,6 @@ export default {
   data() {
     return {
       email: '',
-      username: '',
       password: '',
       errorMsg: '',
       infoMsg: '',
@@ -30,35 +29,15 @@ export default {
       this.errorMsg = ''
       this.infoMsg = ''
 
-      const { data, error } = await supabase.auth.signUp({
+      const { error } = await supabase.auth.signUp({
         email: this.email,
         password: this.password,
       })
 
       if (error) {
         this.errorMsg = 'Error signing up: ' + error.message
-        return
-      }
-
-      const userId = data?.user?.id
-
-      if (!userId) {
-        this.infoMsg = 'Please confirm your email before continuing.'
-        return
-      }
-
-      const { error: profileError } = await supabase.from('profiles').insert([
-        {
-          id: userId,
-          username: this.username,
-        },
-      ])
-
-      if (profileError) {
-        this.errorMsg = 'Error saving profile: ' + profileError.message
       } else {
-        this.infoMsg = 'Account created! You can now log in.'
-        this.$router.push('/login') // or wherever you want to go
+        this.infoMsg = 'Check your email to confirm your account.'
       }
     },
   },

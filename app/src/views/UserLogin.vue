@@ -1,29 +1,57 @@
 <!-- src/views/UserLogin.vue -->
-<script setup>
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+<script>
 import { supabase } from '../supabase'
 
-const email = ref('')
-const password = ref('')
-const errorMsg = ref('')
-const router = useRouter()
+export default {
+  data() {
+    return {
+      email: '',
+      password: '',
+      username: '', // optional, if you want to update it after login
+      errorMsg: '',
+    }
+  },
+  methods: {
+    async login() {
+      const { data: sessionData, error } = await supabase.auth.signInWithPassword({
+        email: this.email,
+        password: this.password,
+      })
 
-const login = async () => {
-  errorMsg.value = ''
-  const { error } = await supabase.auth.signInWithPassword({
-    email: email.value,
-    password: password.value,
-  })
+      if (error) {
+        this.errorMsg = 'Login failed: ' + error.message
+        return
+      }
 
-  if (error) {
-    errorMsg.value = error.message
-    return
-  }
+      const user = sessionData.user
 
-  router.push('/home')
+      // Check if profile exists
+      const { data: profile, error: profileError } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', user.id)
+        .single()
+
+      if (!profile) {
+        const { error: insertError } = await supabase.from('profiles').insert([
+          {
+            id: user.id,
+            username: this.username || 'New User', // fallback
+          },
+        ])
+
+        if (insertError) {
+          this.errorMsg = 'Error creating profile: ' + insertError.message
+          return
+        }
+      }
+
+      this.$router.push('/dashboard')
+    },
+  },
 }
 </script>
+
 
 <template>
   <div>
