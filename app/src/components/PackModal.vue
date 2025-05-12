@@ -2,14 +2,24 @@
   <div class="modal-overlay" ref="overlay">
     <div class="modal-content" ref="modal">
       <h3>Your Pack</h3>
-      <ul class="modal-results">
+
+      <div v-if="loading" class="modal-spinner"></div>
+
+      <ul v-else class="modal-results">
         <li v-for="card in pack" :key="card.id">
           <img :src="card.images.small" :alt="card.name" loading="lazy" />
           <p>{{ card.name }}</p>
           <span class="rarity">{{ card.rarity }}</span>
         </li>
       </ul>
-      <button class="close-btn" @click="$emit('close')">Close</button>
+
+      <div class="modal-actions">
+        <button class="close-btn" @click="$emit('close')">Close</button>
+        <button class="open-btn" @click="$emit('open-another')" :disabled="loading">
+          <span v-if="loading">Opening...</span>
+          <span v-else>Open Another</span>
+        </button>
+      </div>
     </div>
   </div>
 </template>
@@ -18,7 +28,10 @@
 import { ref, onMounted, nextTick } from 'vue'
 import gsap from 'gsap'
 
-defineProps({ pack: Array })
+defineProps({
+  pack: Array,
+  loading: Boolean,
+})
 
 const modal = ref(null)
 
@@ -59,6 +72,25 @@ onMounted(async () => {
   text-align: center;
 }
 
+.modal-spinner {
+  border: 6px solid #f3f3f3;
+  border-top: 6px solid orange;
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  animation: spin 1s linear infinite;
+  margin: 20px auto;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
 .modal-results {
   display: flex;
   flex-wrap: wrap;
@@ -81,8 +113,15 @@ onMounted(async () => {
   margin-bottom: 6px;
 }
 
-.close-btn {
-  background: orange;
+.modal-actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.close-btn,
+.open-btn {
   border: none;
   padding: 10px 20px;
   border-radius: 6px;
@@ -90,7 +129,18 @@ onMounted(async () => {
   transition: transform 0.2s;
 }
 
-.close-btn:hover {
+.close-btn {
+  background: orange;
+  color: black;
+}
+
+.open-btn {
+  background: #00b7ff;
+  color: white;
+}
+
+.close-btn:hover,
+.open-btn:hover {
   transform: scale(1.05);
 }
 </style>

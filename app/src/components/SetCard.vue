@@ -2,11 +2,15 @@
   <div class="set-card" ref="card">
     <img :src="set.images.symbol" :alt="set.name" loading="lazy" />
     <p>{{ set.name }}</p>
-    <button class="open-button" @click="$emit('open')">Open Pack</button>
+    <button class="open-button" :disabled="isOpening" @click="$emit('open')">
+      <span v-if="isOpening">Opening...</span>
+      <span v-else>Open Pack</span>
+    </button>
   </div>
 </template>
 
 <script setup>
+defineProps({ set: Object, isOpening: Boolean })
 import { ref, onMounted, onUnmounted } from 'vue'
 import gsap from 'gsap'
 import ScrollTrigger from 'gsap/ScrollTrigger'
@@ -14,7 +18,6 @@ import ScrollTrigger from 'gsap/ScrollTrigger'
 gsap.registerPlugin(ScrollTrigger)
 
 const card = ref(null)
-defineProps({ set: Object })
 
 let scrollTween
 

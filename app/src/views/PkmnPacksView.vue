@@ -1,8 +1,39 @@
+<script setup>
+import { onMounted, ref } from 'vue'
+import { usePokemonPacks } from '@/composables/usePokemonPacks'
+import SetCard from '@/components/SetCard.vue'
+import PackModal from '@/components/PackModal.vue'
+
+const { generations, pack, showModal, loading, fetchAllSets, openPack } = usePokemonPacks()
+
+const openingSetId = ref(null)
+const lastOpenedSetId = ref(null)
+
+onMounted(fetchAllSets)
+
+function handleOpenPack(setId) {
+  if (openingSetId.value) return
+  openingSetId.value = setId
+  lastOpenedSetId.value = setId
+  openPack(setId).finally(() => {
+    openingSetId.value = null
+  })
+}
+
+function handleOpenAnother() {
+  if (openingSetId.value || !lastOpenedSetId.value) return
+  openingSetId.value = lastOpenedSetId.value
+  openPack(lastOpenedSetId.value).finally(() => {
+    openingSetId.value = null
+  })
+}
+</script>
+
 <template>
   <div class="app-container">
     <h1>Choose a Set</h1>
 
-    <div v-if="loading" class="spinner"></div>
+    <div v-if="loading && !showModal" class="spinner"></div>
 
     <div v-for="(sets, gen) in generations" :key="gen" class="generation-section">
       <h2 class="generation-title">{{ gen }}</h2>
@@ -11,26 +42,21 @@
           v-for="(set, index) in sets"
           :key="set.id"
           :set="set"
-          :index="index"
-          @open="openPack(set.id)"
+          :isOpening="openingSetId === set.id"
+          @open="handleOpenPack(set.id)"
         />
       </div>
     </div>
 
-    <PackModal v-if="showModal" :pack="pack" @close="showModal = false" />
+    <PackModal
+      v-if="showModal"
+      :pack="pack"
+      :loading="loading"
+      @close="showModal = false"
+      @open-another="handleOpenAnother"
+    />
   </div>
 </template>
-
-<script setup>
-import { onMounted } from 'vue'
-import { usePokemonPacks } from '@/composables/usePokemonPacks'
-import SetCard from '@/components/SetCard.vue'
-import PackModal from '@/components/PackModal.vue'
-
-const { generations, pack, showModal, loading, fetchAllSets, openPack } = usePokemonPacks()
-
-onMounted(fetchAllSets)
-</script>
 
 <style>
 .app-container {
