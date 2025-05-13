@@ -1,4 +1,20 @@
-<!-- src/views/UserLogin.vue -->
+<template>
+  <div>
+    <h2>Login</h2>
+    <form @submit.prevent="login">
+      <input type="email" v-model="email" placeholder="Email" required />
+      <input type="password" v-model="password" placeholder="Password" required />
+      <button type="submit">Log In</button>
+    </form>
+
+    <!-- Sign Up Button -->
+    <p>Don't have an account?</p>
+    <button @click="goToSignUp">Sign Up</button>
+
+    <p v-if="errorMsg">{{ errorMsg }}</p>
+  </div>
+</template>
+
 <script>
 import { supabase } from '../supabase'
 
@@ -7,62 +23,25 @@ export default {
     return {
       email: '',
       password: '',
-      username: '', // optional, if you want to update it after login
       errorMsg: '',
     }
   },
   methods: {
     async login() {
-      const { data: sessionData, error } = await supabase.auth.signInWithPassword({
+      const { error } = await supabase.auth.signInWithPassword({
         email: this.email,
         password: this.password,
       })
 
       if (error) {
         this.errorMsg = 'Login failed: ' + error.message
-        return
+      } else {
+        this.$router.push('/') // or wherever you want to go after login
       }
-
-      const user = sessionData.user
-
-      // Check if profile exists
-      const { data: profile, error: profileError } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', user.id)
-        .single()
-
-      if (!profile) {
-        const { error: insertError } = await supabase.from('profiles').insert([
-          {
-            id: user.id,
-            username: this.username || 'New User', // fallback
-          },
-        ])
-
-        if (insertError) {
-          this.errorMsg = 'Error creating profile: ' + insertError.message
-          return
-        }
-      }
-
-      this.$router.push('/dashboard')
+    },
+    goToSignUp() {
+      this.$router.push('/signup') // This navigates to your SignUp.vue page
     },
   },
 }
 </script>
-
-
-<template>
-  <div>
-    <h2>Login</h2>
-    <input v-model="email" placeholder="Email" />
-    <input v-model="password" type="password" placeholder="Password" />
-    <button @click="login">Login</button>
-
-    <p v-if="errorMsg" style="color: red">{{ errorMsg }}</p>
-
-    <!-- 👇 Sign Up Redirect -->
-    <p>Don't have an account? <router-link to="/signup">Sign up</router-link></p>
-  </div>
-</template>
