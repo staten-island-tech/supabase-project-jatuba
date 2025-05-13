@@ -3,10 +3,12 @@
     <div class="modal-content" ref="modal">
       <h3>Your Pack</h3>
 
-      <div v-if="loading" class="modal-spinner"></div>
+      <div v-if="loading" class="loader-container">
+        <div class="modal-spinner" />
+      </div>
 
       <ul v-else class="modal-results">
-        <li v-for="card in pack" :key="card.id">
+        <li v-for="card in pack" :key="card.id" class="modal-card">
           <img :src="card.images.small" :alt="card.name" loading="lazy" />
           <p>{{ card.name }}</p>
           <span class="rarity">{{ card.rarity }}</span>
@@ -65,11 +67,22 @@ onMounted(async () => {
   color: white;
   padding: 20px;
   border-radius: 10px;
-  width: 90%;
-  max-width: 800px;
+  width: auto;
+  max-width: 90vw;
   max-height: 90vh;
-  overflow-y: auto;
+  overflow: visible;
   text-align: center;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.loader-container {
+  height: 200px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .modal-spinner {
@@ -79,7 +92,6 @@ onMounted(async () => {
   width: 48px;
   height: 48px;
   animation: spin 1s linear infinite;
-  margin: 20px auto;
 }
 
 @keyframes spin {
@@ -95,22 +107,45 @@ onMounted(async () => {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 12px;
-  list-style: none;
-  padding: 0;
+  gap: 16px;
   margin: 20px 0;
+  width: 100%;
+  min-height: 180px;
+  position: relative;
+  overflow: visible;
 }
 
-.modal-results li {
+.modal-card {
   background: #333;
   padding: 8px;
   border-radius: 6px;
   width: 150px;
+  transition:
+    transform 0.3s ease,
+    z-index 0.3s;
+  position: relative;
+  z-index: 1;
 }
 
-.modal-results img {
+.modal-card:hover {
+  transform: scale(1.8);
+  z-index: 10;
+}
+
+.modal-card img {
   width: 100%;
   margin-bottom: 6px;
+  border-radius: 4px;
+}
+
+.modal-card p {
+  margin: 4px 0;
+  font-weight: bold;
+}
+
+.modal-card .rarity {
+  font-size: 0.85rem;
+  color: #aaa;
 }
 
 .modal-actions {
