@@ -127,5 +127,15 @@ img {
 p {
   color: white;
   font-weight: bold;
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 600;
+  font-style: normal;
+}
+
+span {
+  font-weight: bold;
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 600;
+  font-style: normal;
 }
 </style>

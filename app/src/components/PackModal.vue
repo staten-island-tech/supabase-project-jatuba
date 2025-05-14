@@ -162,6 +162,12 @@ onMounted(async () => {
   border-radius: 6px;
   cursor: pointer;
   transition: transform 0.2s;
+  color: white;
+  font-weight: bold;
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 600;
+  font-style: normal;
+  font-size: 20px;
 }
 
 .close-btn {
@@ -177,5 +183,27 @@ onMounted(async () => {
 .close-btn:hover,
 .open-btn:hover {
   transform: scale(1.05);
+}
+
+p {
+  color: white;
+  font-weight: bold;
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 600;
+  font-style: normal;
+  font-size: 20px;
+}
+
+span {
+  color: white;
+  font-weight: bold;
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 600;
+  font-style: normal;
+  font-size: 15px;
+}
+
+ul {
+  list-style-type: none;
 }
 </style>

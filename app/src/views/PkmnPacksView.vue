@@ -70,9 +70,18 @@ function handleOpenAnother() {
 }
 
 .generation-title {
-  font-size: 24px;
   margin: 32px 0 16px;
   text-align: center;
+  font-family: 'Handjet', sans-serif;
+  font-optical-sizing: auto;
+  font-size: 50px;
+}
+
+h1 {
+  text-align: center;
+  font-family: 'Handjet', sans-serif;
+  font-optical-sizing: auto;
+  font-size: 75px;
 }
 
 .set-grid {
