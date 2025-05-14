@@ -28,6 +28,7 @@ export default {
       this.message = ''
       const { data, error } = await supabase.auth.signUp({
         email: this.email,
+        username: this.username,
         password: this.password,
       })
 
