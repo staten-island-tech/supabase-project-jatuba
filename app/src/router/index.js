@@ -7,7 +7,7 @@ import PkmnPacksView from '@/views/PkmnPacksView.vue'
 import SetView from '@/views/SetView.vue'
 
 const routes = [
-  { path: '/', redirect: '/login' }, // default route
+  { path: '/', redirect: '/login' },
   { path: '/home', component: HomeView },
   { path: '/signup', component: SignUp },
   { path: '/login', component: UserLogin },
@@ -20,3 +20,5 @@ const router = createRouter({
   history: createWebHistory(),
   routes,
 })
+
+export default router
