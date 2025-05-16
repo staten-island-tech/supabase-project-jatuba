@@ -1,15 +1,3 @@
-<script setup>
-import { onMounted } from 'vue'
-import { useUserStore } from '@/stores/user.js'
-
-const userStore = useUserStore()
-
-onMounted(() => {
-  userStore.fetchUser()
-})
-</script>
-
-<template></template>
 <template>
   <div class="home-container">
     <h1>Welcome to the Pokémon Pack Opener</h1>
@@ -32,7 +20,16 @@ onMounted(() => {
   </div>
 </template>
 
-<script setup></script>
+<script setup>
+import { onMounted } from 'vue'
+import { useUserStore } from '@/stores/user.js'
+
+const userStore = useUserStore()
+
+onMounted(() => {
+  userStore.fetchUser()
+})
+</script>
 
 <style>
 .home-container {
