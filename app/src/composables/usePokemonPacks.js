@@ -6,16 +6,30 @@ function categorizeCards(cards) {
     uncommon: [],
     rare: [],
     rareHolo: [],
-    unique: [],
+    ultraRare: [],
   }
 
   for (const card of cards) {
     const rarity = card.rarity?.toLowerCase() || ''
-    if (rarity.includes('common')) categories.common.push(card)
-    else if (rarity.includes('uncommon')) categories.uncommon.push(card)
-    else if (rarity.includes('rare holo')) categories.rareHolo.push(card)
-    else if (rarity.includes('rare')) categories.rare.push(card)
-    else categories.unique.push(card)
+
+    if (
+      rarity.includes('ultra rare') ||
+      rarity.includes('secret') ||
+      rarity.includes('illustration') ||
+      rarity.includes('hyper') ||
+      rarity.includes('special') ||
+      rarity.includes('ace spec')
+    ) {
+      categories.ultraRare.push(card)
+    } else if (rarity.includes('rare holo')) {
+      categories.rareHolo.push(card)
+    } else if (rarity.includes('rare')) {
+      categories.rare.push(card)
+    } else if (rarity.includes('uncommon')) {
+      categories.uncommon.push(card)
+    } else {
+      categories.common.push(card)
+    }
   }
 
   return categories
@@ -24,6 +38,12 @@ function categorizeCards(cards) {
 function getRandomCard(cards) {
   if (!cards.length) return null
   return cards[Math.floor(Math.random() * cards.length)]
+}
+
+function getWeightedRandomCard(primaryPool, secondaryPool, secondaryChance = 0.05) {
+  const useSecondary = Math.random() < secondaryChance
+  const pool = useSecondary && secondaryPool.length ? secondaryPool : primaryPool
+  return getRandomCard(pool)
 }
 
 export function usePokemonPacks() {
@@ -78,13 +98,11 @@ export function usePokemonPacks() {
       }
 
       const rareOrHolo = [...categorized.rare, ...categorized.rareHolo]
+
       const rareCard = getRandomCard(rareOrHolo)
       if (rareCard) opened.push(rareCard)
 
-      const finalCard = categorized.unique.length
-        ? getRandomCard(categorized.unique)
-        : getRandomCard(rareOrHolo)
-
+      const finalCard = getWeightedRandomCard(rareOrHolo, categorized.ultraRare, 0.05)
       if (finalCard) opened.push(finalCard)
 
       pack.value = opened
