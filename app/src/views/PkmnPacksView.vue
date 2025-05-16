@@ -1,4 +1,5 @@
 <template>
+
   <div v-if="loading" class="global-loader">
     <div class="modal-spinner" />
   </div>
@@ -6,7 +7,11 @@
   <div class="app-container">
     <h1>Choose a Set</h1>
 
-    <div v-for="(sets, gen) in generations" :key="gen" class="generation-section">
+    <div
+      v-for="(sets, gen) in filteredGenerations"
+      :key="gen"
+      class="generation-section"
+    >
       <h2 class="generation-title">{{ gen }}</h2>
       <div class="set-grid">
         <SetCard
@@ -27,10 +32,12 @@
       @open-another="handleOpenAnother"
     />
   </div>
+
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue'
+
+import { onMounted, ref, computed } from 'vue'
 import { usePokemonPacks } from '@/composables/usePokemonPacks'
 import SetCard from '@/components/SetCard.vue'
 import PackModal from '@/components/PackModal.vue'
@@ -39,6 +46,14 @@ const { generations, pack, showModal, loading, fetchAllSets, openPack } = usePok
 
 const openingSetId = ref(null)
 const lastOpenedSetId = ref(null)
+
+const filteredGenerations = computed(() => {
+  const result = {}
+  for (const [key, value] of Object.entries(generations.value)) {
+    if (key !== 'Other') result[key] = value
+  }
+  return result
+})
 
 onMounted(fetchAllSets)
 
@@ -58,9 +73,11 @@ function handleOpenAnother() {
     openingSetId.value = null
   })
 }
+
 </script>
 
 <style>
+
 .app-container {
   padding: 20px;
   background-color: #1a1a1a;
@@ -123,4 +140,5 @@ h1 {
     transform: rotate(360deg);
   }
 }
+
 </style>

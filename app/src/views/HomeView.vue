@@ -36,6 +36,10 @@ h1 {
 p {
   font-size: 18px;
   margin-bottom: 32px;
+  font-weight: bold;
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 600;
+  font-style: normal;
 }
 
 button {
@@ -45,5 +49,9 @@ button {
   border: none;
   border-radius: 6px;
   cursor: pointer;
+  font-weight: bold;
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 600;
+  font-style: normal;
 }
 </style>

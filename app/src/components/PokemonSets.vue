@@ -143,7 +143,12 @@ h2 {
   background-color: #444;
   padding: 10px 20px;
   border-radius: 8px;
+  text-align: center;
+  font-family: 'Handjet', sans-serif;
+  font-optical-sizing: auto;
 }
+
+
 
 table {
   width: 80%;
@@ -157,6 +162,10 @@ td {
   text-align: left;
   border: 1px solid #ddd;
   color: #f0f0f0;
+  font-weight: bold;
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 600;
+  font-style: normal;
 }
 
 th {

@@ -1,4 +1,5 @@
 <template>
+
   <div class="modal-overlay" ref="overlay">
     <div class="modal-content" ref="modal">
       <h3>Your Pack</h3>
@@ -24,9 +25,11 @@
       </div>
     </div>
   </div>
+
 </template>
 
 <script setup>
+
 import { ref, onMounted, nextTick } from 'vue'
 import gsap from 'gsap'
 
@@ -46,9 +49,11 @@ onMounted(async () => {
     ease: 'power2.out',
   })
 })
+
 </script>
 
 <style scoped>
+
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -194,8 +199,8 @@ p {
   font-size: 20px;
 }
 
-span {
-  color: white;
+button {
+  color: black;
   font-weight: bold;
   font-family: 'Rajdhani', sans-serif;
   font-weight: 600;
@@ -203,7 +208,15 @@ span {
   font-size: 15px;
 }
 
+h3{
+  text-align: center;
+  font-family: 'Handjet', sans-serif;
+  font-optical-sizing: auto;
+  font-size: 2rem;
+}
+
 ul {
   list-style-type: none;
 }
+
 </style>
