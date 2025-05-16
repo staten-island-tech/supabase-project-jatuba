@@ -2,9 +2,9 @@
   <div>
     <h2>Sign Up</h2>
     <form @submit.prevent="signUp">
-      <input v-model="email" type="email" placeholder="Email" required />
-      <input v-model="username" type="text" placeholder="Username" required />
-      <input v-model="password" type="password" placeholder="Password" required />
+      <input v-model="email" type="email" placeholder="Email" name="email" required />
+      <input v-model="username" type="text" placeholder="Username" name="username" required />
+      <input v-model="password" type="password" placeholder="Password" name="password" required />
       <button type="submit">Sign Up</button>
     </form>
     <p v-if="message">{{ message }}</p>
@@ -26,10 +26,15 @@ export default {
   methods: {
     async signUp() {
       this.message = ''
+
       const { data, error } = await supabase.auth.signUp({
         email: this.email,
-        username: this.username,
         password: this.password,
+        options: {
+          data: {
+            username: this.username,
+          },
+        },
       })
 
       if (error) {
@@ -37,12 +42,18 @@ export default {
         return
       }
 
-      const user = data.user
+      const user = data?.user
+
       if (user) {
-        await supabase.from('profiles').insert({
+        const { error: profileError } = await supabase.from('profiles').upsert({
           id: user.id,
           username: this.username,
         })
+
+        if (profileError) {
+          this.message = 'Error saving profile: ' + profileError.message
+          return
+        }
       }
 
       this.message = 'Confirmation email sent! Please verify your email.'
