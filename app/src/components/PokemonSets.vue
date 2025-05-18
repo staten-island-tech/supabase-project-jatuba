@@ -148,8 +148,6 @@ h2 {
   font-optical-sizing: auto;
 }
 
-
-
 table {
   width: 80%;
   border-collapse: collapse;

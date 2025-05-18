@@ -1,5 +1,4 @@
 <template>
-
   <div class="set-card" ref="card">
     <img :src="set.images.symbol" :alt="set.name" loading="lazy" />
     <p>{{ set.name }}</p>
@@ -8,12 +7,9 @@
       <span v-else>Open Pack</span>
     </button>
   </div>
-  
 </template>
 
-
 <script setup>
-
 defineProps({ set: Object, isOpening: Boolean })
 
 import { ref, onMounted, onUnmounted } from 'vue'
@@ -46,7 +42,7 @@ onMounted(() => {
         end: 'bottom 20%',
         scrub: true,
       },
-    }
+    },
   )
 })
 
@@ -54,12 +50,9 @@ onUnmounted(() => {
   scrollTween?.scrollTrigger?.kill()
   scrollTween?.kill()
 })
-
 </script>
 
-
 <style scoped>
-
 .set-card {
   display: flex;
   flex-direction: column;
@@ -71,8 +64,10 @@ onUnmounted(() => {
   width: 220px;
   text-align: center;
   margin: 10px;
-  opacity: 0; 
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  opacity: 0;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .set-card:hover {
@@ -109,7 +104,9 @@ span {
   cursor: pointer;
   font-weight: bold;
   color: black;
-  transition: background-color 0.2s, transform 0.2s;
+  transition:
+    background-color 0.2s,
+    transform 0.2s;
 }
 
 .open-button:hover {
@@ -120,5 +117,4 @@ span {
 .open-button:active {
   transform: scale(0.95);
 }
-
 </style>
