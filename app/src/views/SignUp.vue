@@ -52,6 +52,7 @@ export default {
 
         if (profileError) {
           this.message = 'Error saving profile: ' + profileError.message
+          this.$router.push('/')
           return
         }
       }

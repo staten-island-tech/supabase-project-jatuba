@@ -36,7 +36,7 @@ export default {
       if (error) {
         this.errorMsg = 'Login failed: ' + error.message
       } else {
-        this.$router.push('/') // or wherever you want to go after login
+        this.$router.push('/main') // or wherever you want to go after login
       }
     },
     goToSignUp() {
@@ -47,13 +47,11 @@ export default {
 </script>
 
 <style>
-
 h2 {
   font-family: 'Handjet', sans-serif;
   font-optical-sizing: auto;
   font-size: 55px;
 }
-
 
 input {
   font-size: 18px;
@@ -65,7 +63,6 @@ input {
   height: 40px;
 }
 
-
 p {
   font-size: 18px;
   margin-bottom: 32px;
@@ -75,17 +72,16 @@ p {
   font-style: normal;
 }
 
-form{
+form {
   justify-content: space-between;
 
   display: flex;
   flex-direction: row;
   align-items: flex-start;
   gap: 12px; /* Adds vertical spacing between children */
-
 }
 
-button{
+button {
   height: 40px;
 }
 </style>
