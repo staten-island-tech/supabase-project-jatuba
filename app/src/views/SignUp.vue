@@ -9,6 +9,7 @@
     </form>
     <p v-if="message">{{ message }}</p>
   </div>
+  <button @click="goToLogIn">Go to Log In</button>
 </template>
 
 <script>
@@ -49,15 +50,12 @@ export default {
           id: user.id,
           username: this.username,
         })
-
-        if (profileError) {
-          this.message = 'Error saving profile: ' + profileError.message
-          this.$router.push('/')
-          return
-        }
       }
 
-      this.message = 'Confirmation email sent! Please verify your email.'
+      this.message = 'Sign Up Success! Return to log in page'
+    },
+    goToLogIn() {
+      this.$router.push('/')
     },
   },
 }
