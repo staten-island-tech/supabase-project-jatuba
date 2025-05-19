@@ -5,6 +5,7 @@ import UserLogin from '../views/UserLogin.vue'
 import UserAuth from '../views/UserAuth.vue'
 import PkmnPacksView from '@/views/PkmnPacksView.vue'
 import SetView from '@/views/SetView.vue'
+import MainView from '@/views/MainView.vue'
 
 const routes = [
   { path: '/', redirect: '/login' },
@@ -14,6 +15,7 @@ const routes = [
   { path: '/auth', component: UserAuth },
   { path: '/packs', name: 'Packs', component: PkmnPacksView },
   { path: '/set', name: 'Sets', component: SetView },
+  { path: '/main', component: MainView },
 ]
 
 const router = createRouter({

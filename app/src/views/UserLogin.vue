@@ -6,12 +6,10 @@
       <input type="password" v-model="password" placeholder="Password" required />
       <button type="submit">Log In</button>
     </form>
+    <p class="errormsg" v-if="errorMsg">{{ errorMsg }}</p>
 
-    <!-- Sign Up Button -->
     <p>Don't have an account?</p>
     <button @click="goToSignUp">Sign Up</button>
-
-    <p v-if="errorMsg">{{ errorMsg }}</p>
   </div>
 </template>
 
@@ -36,24 +34,22 @@ export default {
       if (error) {
         this.errorMsg = 'Login failed: ' + error.message
       } else {
-        this.$router.push('/') // or wherever you want to go after login
+        this.$router.push('/')
       }
     },
     goToSignUp() {
-      this.$router.push('/signup') // This navigates to your SignUp.vue page
+      this.$router.push('/signup')
     },
   },
 }
 </script>
 
 <style>
-
 h2 {
   font-family: 'Handjet', sans-serif;
   font-optical-sizing: auto;
   font-size: 55px;
 }
-
 
 input {
   font-size: 18px;
@@ -65,7 +61,6 @@ input {
   height: 40px;
 }
 
-
 p {
   font-size: 18px;
   margin-bottom: 32px;
@@ -75,17 +70,20 @@ p {
   font-style: normal;
 }
 
-form{
+form {
   justify-content: space-between;
 
   display: flex;
   flex-direction: row;
   align-items: flex-start;
-  gap: 12px; /* Adds vertical spacing between children */
-
+  gap: 12px;
 }
 
-button{
+button {
   height: 40px;
+}
+
+.errormsg {
+  color: red;
 }
 </style>
