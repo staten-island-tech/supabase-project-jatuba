@@ -7,14 +7,12 @@ import { RouterView } from 'vue-router'
   <router-view />
 </template>
 
-<style>
-
-h1{
+<style scoped>
+h1 {
   text-align: center;
   font-family: 'Handjet', sans-serif;
   font-optical-sizing: auto;
   font-size: 85px;
   color: orange;
 }
-
 </style>
