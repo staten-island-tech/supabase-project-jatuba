@@ -6,12 +6,10 @@
       <input type="password" v-model="password" placeholder="Password" required />
       <button type="submit">Log In</button>
     </form>
+    <p class="errormsg" v-if="errorMsg">{{ errorMsg }}</p>
 
-    <!-- Sign Up Button -->
     <p>Don't have an account?</p>
     <button @click="goToSignUp">Sign Up</button>
-
-    <p v-if="errorMsg">{{ errorMsg }}</p>
   </div>
 </template>
 
@@ -40,7 +38,7 @@ export default {
       }
     },
     goToSignUp() {
-      this.$router.push('/signup') // This navigates to your SignUp.vue page
+      this.$router.push('/signup')
     },
   },
 }
@@ -83,5 +81,9 @@ form {
 
 button {
   height: 40px;
+}
+
+.errormsg {
+  color: red;
 }
 </style>

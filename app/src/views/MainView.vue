@@ -1,11 +1,15 @@
 <template>
   <div class="home-container">
-    <div v-if="userStore.profile">
-      <h1>Welcome{{ userStore.profile.username }}!</h1>
-    </div>
-    <div v-else>
-      <p>Loading your profile...</p>
-    </div>
+    <h1>Welcome to the Pokémon Pack Opener</h1>
+    <p>Open booster packs and discover cards from all generations!</p>
+
+    <router-link to="/packs">
+      <button>Start Opening Packs</button>
+    </router-link>
+
+    <router-link to="/set">
+      <button>View All Sets</button>
+    </router-link>
   </div>
 </template>
 
