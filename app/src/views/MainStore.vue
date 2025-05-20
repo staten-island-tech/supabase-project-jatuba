@@ -4,7 +4,7 @@
   </div>
 
   <div class="app-container">
-    <h1>Choose a Set</h1>
+    <h1>BUY PACKS!</h1>
     <button @click="$router.push('/')">Back to Home</button>
 
     <div v-for="(sets, gen) in filteredGenerations" :key="gen" class="generation-section">
