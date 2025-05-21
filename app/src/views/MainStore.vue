@@ -10,13 +10,15 @@
     <div v-for="(sets, gen) in filteredGenerations" :key="gen" class="generation-section">
       <h2 class="generation-title">{{ gen }}</h2>
       <div class="set-grid">
-        <SetCard
+        <StoreCard
           v-for="(set, index) in sets"
           :key="set.id"
           :set="set"
+          :price="generationPrices[gen] || 20"
           :isOpening="openingSetId === set.id"
           @open="handleOpenPack(set.id)"
-        />
+        >
+        </StoreCard>
       </div>
     </div>
 
@@ -33,8 +35,8 @@
 <script setup>
 import { onMounted, ref, computed } from 'vue'
 import { usePokemonPacks } from '@/composables/usePokemonPacks'
-import SetCard from '@/components/SetCard.vue'
 import PackModal from '@/components/PackModal.vue'
+import StoreCard from '@/components/StoreCard.vue'
 
 const { generations, pack, showModal, loading, fetchAllSets, openPack } = usePokemonPacks()
 
@@ -66,6 +68,23 @@ function handleOpenAnother() {
   openPack(lastOpenedSetId.value).finally(() => {
     openingSetId.value = null
   })
+}
+
+const generationPrices = {
+  Base: 500,
+  Neo: 300,
+  EX: 250,
+  'Diamond & Pearl': 200,
+  'Black & White': 150,
+  XY: 100,
+  'Sun & Moon': 25,
+  'Sword & Shield': 10,
+  'Scarlet & Violet': 10,
+  'E-Card': 200,
+  POP: 15,
+  Platinum: 100,
+  'HeartGold & SoulSilver': 100,
+  Gym: 100,
 }
 </script>
 
