@@ -1,15 +1,15 @@
 <template>
   <div class="set-card" ref="card">
-    <slot>
-      <h3>PURCHASE A PACK</h3>
-      <p class="cost">Price: ${{ price }}</p></slot
-    >
     <img :src="set.images.symbol" :alt="set.name" loading="lazy" />
     <p>{{ set.name }}</p>
     <button class="open-button" :disabled="isOpening" @click="$emit('open')">
       <span v-if="isOpening">Opening...</span>
       <span v-else>BUY Pack</span>
     </button>
+    <slot>
+      <h3>PURCHASE A PACK</h3>
+      <p class="cost">Price: ${{ price }}</p></slot
+    >
   </div>
 </template>
 
@@ -68,6 +68,7 @@ onUnmounted(() => {
   width: 220px;
   text-align: center;
   margin: 10px;
+  gap: 1rem;
   opacity: 0;
   transition:
     transform 0.2s ease,
@@ -99,6 +100,7 @@ h3 {
   font-family: 'Rajdhani', sans-serif;
   font-weight: 600;
   font-style: normal;
+  font-size: 1rem;
 }
 
 span {
@@ -114,7 +116,7 @@ span {
   font-family: 'Rajdhani', sans-serif;
   font-weight: 600;
   font-style: normal;
-  font-size: 2rem;
+  font-size: 1.25rem;
 }
 
 .open-button {
