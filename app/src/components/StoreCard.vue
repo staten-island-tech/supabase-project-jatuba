@@ -2,7 +2,7 @@
   <div class="set-card" ref="card">
     <img :src="set.images.symbol" :alt="set.name" loading="lazy" />
     <p>{{ set.name }}</p>
-    <button class="open-button" :disabled="isOpening" @click="$emit('open')">
+    <button class="open-button" :disabled="isOpening" @click="$emit('open', price)">
       <span v-if="isOpening">Opening...</span>
       <span v-else>BUY Pack</span>
     </button>
