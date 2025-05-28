@@ -1,6 +1,6 @@
 import { ref } from 'vue'
 import { supabase } from '@/supabase'
-import { useUserStore } from '@/stores/user' // <-- Correct import here
+import { useUserStore } from '@/stores/user'
 
 function categorizeCards(cards) {
   const categories = {
@@ -83,35 +83,49 @@ export function usePokemonPacks() {
   }
 
   async function openPack(setId) {
-  loading.value = true
-  try {
-    const cards = await fetchCardsForSet(setId)
-    const categorized = categorizeCards(cards)
-    const opened = []
+    loading.value = true
+
+    // Helper to get a card not already used
     const usedIds = new Set()
+    function getUniqueCard(pool) {
+      const available = pool.filter((card) => !usedIds.has(card.id))
+      const card = getRandomCard(available)
+      if (card) usedIds.add(card.id)
+      return card
+    }
+
+    try {
+      const cards = await fetchCardsForSet(setId)
+      const categorized = categorizeCards(cards)
+      const opened = []
 
       for (let i = 0; i < 5; i++) {
-        const card = getRandomCard(categorized.common)
+        const card = getUniqueCard(categorized.common)
         if (card) opened.push(card)
       }
 
       for (let i = 0; i < 2; i++) {
-        const card = getRandomCard(categorized.uncommon)
+        const card = getUniqueCard(categorized.uncommon)
         if (card) opened.push(card)
       }
 
       const rareOrHolo = [...categorized.rare, ...categorized.rareHolo]
-
-      const rareCard = getRandomCard(rareOrHolo)
+      const rareCard = getUniqueCard(rareOrHolo)
       if (rareCard) opened.push(rareCard)
 
-      const finalCard = getWeightedRandomCard(rareOrHolo, categorized.ultraRare, 0.05)
-      if (finalCard) opened.push(finalCard)
+      const finalCard = getWeightedRandomCard(
+        rareOrHolo.filter((card) => !usedIds.has(card.id)),
+        categorized.ultraRare.filter((card) => !usedIds.has(card.id)),
+        0.05,
+      )
+      if (finalCard) {
+        usedIds.add(finalCard.id)
+        opened.push(finalCard)
+      }
 
-      // --- Save pulled cards to Supabase for the logged-in user ---
+      // Save pulled cards to Supabase for the logged-in user
       const userStore = useUserStore()
       const userId = userStore.user?.id
-
       if (!userId) throw new Error('User not logged in')
 
       for (const card of opened) {
@@ -131,46 +145,8 @@ export function usePokemonPacks() {
       console.error('Error opening pack:', e)
     } finally {
       loading.value = false
-    function getUniqueCard(pool) {
-      const available = pool.filter(card => !usedIds.has(card.id))
-      const card = getRandomCard(available)
-      if (card) usedIds.add(card.id)
-      return card
     }
-
-    for (let i = 0; i < 5; i++) {
-      const card = getUniqueCard(categorized.common)
-      if (card) opened.push(card)
-    }
-
-    for (let i = 0; i < 2; i++) {
-      const card = getUniqueCard(categorized.uncommon)
-      if (card) opened.push(card)
-    }
-
-    const rareOrHolo = [...categorized.rare, ...categorized.rareHolo]
-    const rareCard = getUniqueCard(rareOrHolo)
-    if (rareCard) opened.push(rareCard)
-
-    const finalCard = getWeightedRandomCard(
-      rareOrHolo.filter(card => !usedIds.has(card.id)),
-      categorized.ultraRare.filter(card => !usedIds.has(card.id)),
-      0.05
-    )
-    if (finalCard) {
-      usedIds.add(finalCard.id)
-      opened.push(finalCard)
-    }
-
-    pack.value = opened
-    showModal.value = true
-  } catch (e) {
-    console.error('Error opening pack:', e)
-  } finally {
-    loading.value = false
   }
-}
-
 
   return {
     generations,
