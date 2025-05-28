@@ -81,38 +81,53 @@ export function usePokemonPacks() {
   }
 
   async function openPack(setId) {
-    loading.value = true
-    try {
-      const cards = await fetchCardsForSet(setId)
-      const categorized = categorizeCards(cards)
-      const opened = []
+  loading.value = true
+  try {
+    const cards = await fetchCardsForSet(setId)
+    const categorized = categorizeCards(cards)
+    const opened = []
+    const usedIds = new Set()
 
-      for (let i = 0; i < 5; i++) {
-        const card = getRandomCard(categorized.common)
-        if (card) opened.push(card)
-      }
-
-      for (let i = 0; i < 2; i++) {
-        const card = getRandomCard(categorized.uncommon)
-        if (card) opened.push(card)
-      }
-
-      const rareOrHolo = [...categorized.rare, ...categorized.rareHolo]
-
-      const rareCard = getRandomCard(rareOrHolo)
-      if (rareCard) opened.push(rareCard)
-
-      const finalCard = getWeightedRandomCard(rareOrHolo, categorized.ultraRare, 0.05)
-      if (finalCard) opened.push(finalCard)
-
-      pack.value = opened
-      showModal.value = true
-    } catch (e) {
-      console.error('Error opening pack:', e)
-    } finally {
-      loading.value = false
+    function getUniqueCard(pool) {
+      const available = pool.filter(card => !usedIds.has(card.id))
+      const card = getRandomCard(available)
+      if (card) usedIds.add(card.id)
+      return card
     }
+
+    for (let i = 0; i < 5; i++) {
+      const card = getUniqueCard(categorized.common)
+      if (card) opened.push(card)
+    }
+
+    for (let i = 0; i < 2; i++) {
+      const card = getUniqueCard(categorized.uncommon)
+      if (card) opened.push(card)
+    }
+
+    const rareOrHolo = [...categorized.rare, ...categorized.rareHolo]
+    const rareCard = getUniqueCard(rareOrHolo)
+    if (rareCard) opened.push(rareCard)
+
+    const finalCard = getWeightedRandomCard(
+      rareOrHolo.filter(card => !usedIds.has(card.id)),
+      categorized.ultraRare.filter(card => !usedIds.has(card.id)),
+      0.05
+    )
+    if (finalCard) {
+      usedIds.add(finalCard.id)
+      opened.push(finalCard)
+    }
+
+    pack.value = opened
+    showModal.value = true
+  } catch (e) {
+    console.error('Error opening pack:', e)
+  } finally {
+    loading.value = false
   }
+}
+
 
   return {
     generations,

@@ -34,26 +34,6 @@ export const useUserStore = defineStore('user', {
       }
     },
 
-    async updateCredits(amount) {
-      if (!this.user || !this.profile) return
-
-      const current = this.profile.credits || 0
-      const newCredits = current + amount
-
-      if (newCredits < 0) return
-
-      const { data, error } = await supabase
-        .from('profiles')
-        .update({ credits: newCredits })
-        .eq('id', this.user.id)
-        .select()
-        .single()
-
-      if (!error) {
-        this.profile.credits = data.credits
-      }
-    },
-
     async signOut() {
       await supabase.auth.signOut()
       this.user = null
