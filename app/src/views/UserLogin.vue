@@ -34,7 +34,7 @@ export default {
       if (error) {
         this.errorMsg = 'Login failed: ' + error.message
       } else {
-        this.$router.push('/main') // or wherever you want to go after login
+        this.$router.push('/main') 
       }
     },
     goToSignUp() {
@@ -76,7 +76,7 @@ form {
   display: flex;
   flex-direction: row;
   align-items: flex-start;
-  gap: 12px; /* Adds vertical spacing between children */
+  gap: 12px; 
 }
 
 button {
