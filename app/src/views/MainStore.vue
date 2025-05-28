@@ -5,6 +5,11 @@
 
   <div class="app-container">
     <h1>BUY PACKS!</h1>
+    
+    <div v-if="userStore.profile" class="balance-display">
+      <p>Your Balance: <span class="balance">{{ userStore.profile.credits }} credits</span></p>
+    </div>
+
     <button @click="$router.push('/')">Back to Home</button>
 
     <div v-for="(sets, gen) in filteredGenerations" :key="gen" class="generation-section">
@@ -16,9 +21,8 @@
           :set="set"
           :price="generationPrices[gen] || 20"
           :isOpening="openingSetId === set.id"
-          @open="handleOpenPack(set.id)"
-        >
-        </StoreCard>
+          @open="handleOpenPack(set.id, generationPrices[gen] || 20)"
+        />
       </div>
     </div>
 
@@ -35,10 +39,12 @@
 <script setup>
 import { onMounted, ref, computed } from 'vue'
 import { usePokemonPacks } from '@/composables/usePokemonPacks'
+import { useUserStore } from '@/stores/user'
 import PackModal from '@/components/PackModal.vue'
 import StoreCard from '@/components/StoreCard.vue'
 
 const { generations, pack, showModal, loading, fetchAllSets, openPack } = usePokemonPacks()
+const userStore = useUserStore()
 
 const openingSetId = ref(null)
 const lastOpenedSetId = ref(null)
@@ -51,19 +57,42 @@ const filteredGenerations = computed(() => {
   return result
 })
 
-onMounted(fetchAllSets)
+onMounted(async () => {
+  await fetchAllSets()
+  await userStore.fetchUser()
+  console.log("Loaded user profile:", userStore.profile)
 
-function handleOpenPack(setId) {
+})
+
+async function handleOpenPack(setId, price) {
   if (openingSetId.value) return
+
+  const canPurchase = await userStore.purchasePack(price)
+  if (!canPurchase) {
+    alert("You don't have enough credits to buy this pack.")
+    return
+  }
+
   openingSetId.value = setId
   lastOpenedSetId.value = setId
+
   openPack(setId).finally(() => {
     openingSetId.value = null
   })
 }
 
-function handleOpenAnother() {
+async function handleOpenAnother() {
   if (openingSetId.value || !lastOpenedSetId.value) return
+
+  const gen = pack.value?.series || ''
+  const price = generationPrices[gen] || 20
+
+  const canPurchase = await userStore.purchasePack(price)
+  if (!canPurchase) {
+    alert("You don't have enough credits to buy another pack.")
+    return
+  }
+
   openingSetId.value = lastOpenedSetId.value
   openPack(lastOpenedSetId.value).finally(() => {
     openingSetId.value = null
@@ -118,6 +147,17 @@ h1 {
   max-width: 720px;
   margin: 0 auto;
   gap: 16px;
+}
+
+.balance-display {
+  margin: 16px 0;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 1.25rem;
+}
+
+.balance {
+  color: orange;
+  font-weight: bold;
 }
 
 .global-loader {

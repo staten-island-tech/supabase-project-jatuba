@@ -10,10 +10,6 @@
     <router-link to="/store">
       <button>Visit the Store</button>
     </router-link>
-
-    <router-link to="/set">
-      <button>View All Sets</button>
-    </router-link>
   </div>
 </template>
 
