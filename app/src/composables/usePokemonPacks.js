@@ -1,4 +1,6 @@
 import { ref } from 'vue'
+import { supabase } from '@/supabase'
+import { useUserStore } from '@/stores/user' // <-- Correct import here
 
 function categorizeCards(cards) {
   const categories = {
@@ -104,6 +106,23 @@ export function usePokemonPacks() {
 
       const finalCard = getWeightedRandomCard(rareOrHolo, categorized.ultraRare, 0.05)
       if (finalCard) opened.push(finalCard)
+
+      // --- Save pulled cards to Supabase for the logged-in user ---
+      const userStore = useUserStore()
+      const userId = userStore.user?.id
+
+      if (!userId) throw new Error('User not logged in')
+
+      for (const card of opened) {
+        await supabase.from('user_cards').upsert(
+          {
+            user_id: userId,
+            card_id: card.id,
+            quantity: 1,
+          },
+          { onConflict: ['user_id', 'card_id'] },
+        )
+      }
 
       pack.value = opened
       showModal.value = true
