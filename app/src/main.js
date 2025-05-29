@@ -21,12 +21,12 @@ supabase.auth.onAuthStateChange((event, session) => {
   if (event === 'SIGNED_OUT') {
     userStore.user = null
     userStore.profile = null
-    console.log('🔓 Signed out.')
-    router.push('/login') 
+    console.log('Signed out.')
+    router.push('/login')
   }
 
   if (event === 'SIGNED_IN') {
     userStore.fetchUser()
-    console.log('🔐 Signed in.')
+    console.log('Signed in.')
   }
 })

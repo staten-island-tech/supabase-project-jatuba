@@ -85,7 +85,6 @@ export function usePokemonPacks() {
   async function openPack(setId) {
     loading.value = true
 
-    // Helper to get a card not already used
     const usedIds = new Set()
     function getUniqueCard(pool) {
       const available = pool.filter((card) => !usedIds.has(card.id))
@@ -123,7 +122,6 @@ export function usePokemonPacks() {
         opened.push(finalCard)
       }
 
-      // Save pulled cards to Supabase for the logged-in user
       const userStore = useUserStore()
       const userId = userStore.user?.id
       if (!userId) throw new Error('User not logged in')

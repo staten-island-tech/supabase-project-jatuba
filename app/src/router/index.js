@@ -31,16 +31,16 @@ router.beforeEach(async (to, from, next) => {
   const userStore = useUserStore()
 
   if (!userFetched) {
-    console.log('📡 Fetching user from Supabase...')
+    console.log('Fetching user from Supabase...')
     await userStore.fetchUser()
     userFetched = true
   }
 
   const isAuthenticated = !!userStore.user
-  console.log('🔐 Authenticated:', isAuthenticated)
+  console.log('Authenticated:', isAuthenticated)
 
   if (protectedPaths.includes(to.path) && !isAuthenticated) {
-    console.warn('🚫 Not authenticated, redirecting to /login')
+    console.warn('Not authenticated, redirecting to /login')
     return next('/login')
   }
 

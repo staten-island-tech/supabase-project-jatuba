@@ -15,7 +15,7 @@ export const useUserStore = defineStore('user', {
       } = await supabase.auth.getSession()
 
       if (error || !session || !session.user) {
-        console.error('❌ Failed to get session:', error)
+        console.error('Failed to get session:', error)
         return
       }
 
@@ -31,7 +31,7 @@ export const useUserStore = defineStore('user', {
         .single()
 
       if (selectError) {
-        console.warn('🆕 No profile found, creating one for user:', userId)
+        console.warn('No profile found, creating one for user:', userId)
 
         const { data: newProfile, error: insertError } = await supabase
           .from('profiles')
@@ -40,17 +40,17 @@ export const useUserStore = defineStore('user', {
           .single()
 
         if (insertError) {
-          console.error('❌ Failed to create profile:', insertError)
+          console.error('Failed to create profile:', insertError)
           return
         }
 
         this.profile = newProfile
-        console.log('✅ Created new profile:', newProfile)
+        console.log('Created new profile:', newProfile)
         return
       }
 
       this.profile = profileData
-      console.log('✅ Loaded existing profile:', profileData)
+      console.log('Loaded existing profile:', profileData)
     },
 
     async updateCredits(amount) {
@@ -60,7 +60,7 @@ export const useUserStore = defineStore('user', {
       const newCredits = current + amount
 
       if (newCredits < 0) {
-        console.warn('⚠️ Not enough credits to complete this transaction.')
+        console.warn('Not enough credits to complete this transaction.')
         return false
       }
 
@@ -73,11 +73,11 @@ export const useUserStore = defineStore('user', {
 
       if (!error) {
         this.profile.credits = data.credits
-        console.log(`💰 Updated credits: ${data.credits}`)
+        console.log(`Updated credits: ${data.credits}`)
         return true
       }
 
-      console.error('❌ Failed to update credits:', error)
+      console.error('Failed to update credits:', error)
       return false
     },
 
@@ -89,7 +89,7 @@ export const useUserStore = defineStore('user', {
       await supabase.auth.signOut()
       this.user = null
       this.profile = null
-      console.log('👋 Signed out.')
+      console.log('Signed out.')
     },
   },
 })
