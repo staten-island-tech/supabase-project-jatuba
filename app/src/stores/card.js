@@ -1,4 +1,3 @@
-// stores/cards.js
 import { defineStore } from 'pinia'
 import { supabase } from '@/supabase'
 
