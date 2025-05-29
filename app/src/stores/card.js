@@ -8,11 +8,22 @@ export const useCardsStore = defineStore('cards', {
 
   actions: {
     async fetchCollection() {
-      const { data, error } = await supabase.from('user_cards').select('*, card:card_id(*)')
+      const { data, error } = await supabase.from('user_cards').insert(
+        [
+          {
+            user_id: currentUser.id,
+            card_id: selectedCardId,
+          },
+        ],
+        {
+          onConflict: ['user_id', 'card_id'],
+        },
+      )
 
       if (error) {
-        console.error(error)
-        return
+        console.error('Insert error:', error)
+      } else {
+        console.log('Insert success:', data)
       }
 
       this.collection = data
@@ -37,11 +48,11 @@ export const useCardsStore = defineStore('cards', {
           .update({ quantity: existing.quantity + quantity })
           .eq('id', existing.id)
       } else {
-        await supabase.from('user_cards').insert({
-          user_id: user.id,
-          card_id: cardId,
-          quantity,
-        })
+        await supabase
+          .from('user_cards')
+          .insert([{ user_id: 'some-id', card_id: 'some-card' }])
+          .onConflict(['user_id', 'card_id'])
+          .upsert()
       }
 
       await this.fetchCollection()
