@@ -6,6 +6,7 @@
   <div class="app-container">
     <h1>Choose a Set</h1>
     <button @click="$router.push('/')">Back to Home</button>
+    <button @click="logout">Logout</button>
 
     <div v-for="(sets, gen) in filteredGenerations" :key="gen" class="generation-section">
       <h2 class="generation-title">{{ gen }}</h2>
@@ -35,6 +36,13 @@ import { onMounted, ref, computed } from 'vue'
 import { usePokemonPacks } from '@/composables/usePokemonPacks'
 import SetCard from '@/components/SetCard.vue'
 import PackModal from '@/components/PackModal.vue'
+import { useUserStore } from '@/stores/user.js'
+
+const userStore = useUserStore()
+
+onMounted(() => {
+  userStore.fetchUser()
+})
 
 const { generations, pack, showModal, loading, fetchAllSets, openPack } = usePokemonPacks()
 
@@ -122,6 +130,13 @@ h1 {
   width: 60px;
   height: 60px;
   animation: spin 1s linear infinite;
+}
+
+.button-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: center;
 }
 
 @keyframes spin {

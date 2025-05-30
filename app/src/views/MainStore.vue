@@ -5,12 +5,17 @@
 
   <div class="app-container">
     <h1>BUY PACKS!</h1>
-    
+
     <div v-if="userStore.profile" class="balance-display">
-      <p>Your Balance: <span class="balance">{{ userStore.profile.credits }} credits</span></p>
+      <p>
+        Your Balance: <span class="balance">{{ userStore.profile.credits }} credits</span>
+      </p>
     </div>
 
-    <button @click="$router.push('/')">Back to Home</button>
+    <div class="button-group">
+      <button @click="$router.push('/')">Back to Home</button>
+      <button @click="logout">Logout</button>
+    </div>
 
     <div v-for="(sets, gen) in filteredGenerations" :key="gen" class="generation-section">
       <h2 class="generation-title">{{ gen }}</h2>
@@ -49,6 +54,10 @@ const userStore = useUserStore()
 const openingSetId = ref(null)
 const lastOpenedSetId = ref(null)
 
+function logout() {
+  userStore.signOut()
+}
+
 const filteredGenerations = computed(() => {
   const result = {}
   for (const [key, value] of Object.entries(generations.value)) {
@@ -60,8 +69,7 @@ const filteredGenerations = computed(() => {
 onMounted(async () => {
   await fetchAllSets()
   await userStore.fetchUser()
-  console.log("Loaded user profile:", userStore.profile)
-
+  console.log('Loaded user profile:', userStore.profile)
 })
 
 async function handleOpenPack(setId, price) {
@@ -172,6 +180,13 @@ h1 {
   justify-content: center;
   align-items: center;
   backdrop-filter: blur(2px);
+}
+
+.button-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: center;
 }
 
 .modal-spinner {

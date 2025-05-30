@@ -3,13 +3,17 @@
     <h1>Welcome to the Pokémon Pack Opener</h1>
     <p>Open booster packs and discover cards from all generations!</p>
 
-    <router-link to="/packs">
-      <button>Start Opening Packs</button>
-    </router-link>
+    <div class="button-group">
+      <router-link to="/packs">
+        <button>Start Opening Packs</button>
+      </router-link>
 
-    <router-link to="/store">
-      <button>Visit the Store</button>
-    </router-link>
+      <router-link to="/store">
+        <button>Visit the Store</button>
+      </router-link>
+
+      <button @click="logout">Logout</button>
+    </div>
   </div>
 </template>
 
@@ -18,6 +22,10 @@ import { onMounted } from 'vue'
 import { useUserStore } from '@/stores/user.js'
 
 const userStore = useUserStore()
+
+function logout() {
+  userStore.signOut()
+}
 
 onMounted(() => {
   userStore.fetchUser()
@@ -62,5 +70,13 @@ button {
   font-family: 'Rajdhani', sans-serif;
   font-weight: 600;
   font-style: normal;
+  row-gap: 2rem;
+}
+
+.button-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: center;
 }
 </style>
