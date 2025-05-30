@@ -8,51 +8,72 @@ export const useCardsStore = defineStore('cards', {
 
   actions: {
     async fetchCollection() {
-      const { data, error } = await supabase.from('user_cards').insert(
-        [
-          {
-            user_id: currentUser.id,
-            card_id: selectedCardId,
-          },
-        ],
-        {
-          onConflict: ['user_id', 'card_id'],
-        },
-      )
+      const {
+        data: { user },
+      } = await supabase.auth.getUser()
+      if (!user) return
+
+      const { data, error } = await supabase
+        .from('user_cards')
+        .select('card_id, quantity, cards(*)')
+        .eq('user_id', user.id)
 
       if (error) {
-        console.error('Insert error:', error)
+        console.error('Fetch error:', error)
       } else {
-        console.log('Insert success:', data)
+        this.collection = data
       }
-
-      this.collection = data
     },
 
     async addCardToCollection(cardId, quantity = 1) {
       const {
         data: { user },
       } = await supabase.auth.getUser()
-      if (!user) return
+      if (!user) {
+        console.error('No user logged in')
+        return
+      }
 
-      const { data: existing } = await supabase
+      console.log('User ID:', user.id)
+      console.log('Card ID:', cardId)
+
+      const { data: existing, error: selectError } = await supabase
         .from('user_cards')
         .select('*')
         .eq('user_id', user.id)
         .eq('card_id', cardId)
         .maybeSingle()
 
+      if (selectError) {
+        console.error('Error checking existing card:', selectError)
+        return
+      }
+
       if (existing) {
-        await supabase
+        const { error: updateError } = await supabase
           .from('user_cards')
           .update({ quantity: existing.quantity + quantity })
           .eq('id', existing.id)
+
+        if (updateError) {
+          console.error('Update error:', updateError)
+        } else {
+          console.log('Quantity updated successfully')
+        }
       } else {
-        await supabase
-          .from('user_cards')
-          .insert([{ user_id: 'some-id', card_id: 'some-card' }])
-          .onConflict(['user_id', 'card_id'])
-          .upsert()
+        const { data, error: insertError } = await supabase.from('user_cards').insert([
+          {
+            user_id: user.id,
+            card_id: cardId,
+            quantity,
+          },
+        ])
+
+        if (insertError) {
+          console.error('Insert error:', insertError)
+        } else {
+          console.log('Card inserted successfully', data)
+        }
       }
 
       await this.fetchCollection()

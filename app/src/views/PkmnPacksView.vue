@@ -7,21 +7,25 @@
     <h1>Choose a Set</h1>
     <button @click="$router.push('/')">Back to Home</button>
 
-    <div v-for="(sets, gen) in filteredGenerations" :key="gen" class="generation-section">
-      <h2 class="generation-title">{{ gen }}</h2>
-      <div class="set-grid">
-        <SetCard
-          v-for="(set, index) in sets"
-          :key="set.id"
-          :set="set"
-          :isOpening="openingSetId === set.id"
-          @open="handleOpenPack(set.id)"
-        />
+    <div v-if="Object.keys(filteredGenerations).length">
+      <div v-for="(sets, gen) in filteredGenerations" :key="gen" class="generation-section">
+        <h2 class="generation-title">{{ gen }}</h2>
+        <div class="set-grid">
+          <SetCard
+            v-for="set in sets"
+            :key="set.id"
+            :set="set"
+            :isOpening="openingSetId === set.id"
+            @open="handleOpenPack(set.id)"
+          />
+        </div>
       </div>
     </div>
 
+    <p v-else class="no-sets">No sets available.</p>
+
     <PackModal
-      v-if="showModal"
+      v-if="showModal && pack.length"
       :pack="pack"
       :loading="loading"
       @close="showModal = false"
@@ -80,14 +84,12 @@ function handleOpenAnother() {
 
 .generation-title {
   margin: 32px 0 16px;
-  text-align: center;
   font-family: 'Handjet', sans-serif;
   font-optical-sizing: auto;
   font-size: 50px;
 }
 
 h1 {
-  text-align: center;
   font-family: 'Handjet', sans-serif;
   font-optical-sizing: auto;
   font-size: 75px;
@@ -131,5 +133,11 @@ h1 {
   100% {
     transform: rotate(360deg);
   }
+}
+
+.no-sets {
+  margin-top: 40px;
+  font-size: 24px;
+  color: #ccc;
 }
 </style>
