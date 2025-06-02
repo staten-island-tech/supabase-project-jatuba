@@ -61,13 +61,20 @@ export const useCardsStore = defineStore('cards', {
           console.log('Quantity updated successfully')
         }
       } else {
-        const { data, error: insertError } = await supabase.from('user_cards').insert([
+        const { data, error } = await supabase.from('user_cards').upsert(
           {
             user_id: user.id,
             card_id: cardId,
-            quantity,
+            quantity: 1,
           },
-        ])
+          { onConflict: 'user_id,card_id' },
+        )
+
+        if (error) {
+          console.error('Supabase upsert error:', error.message)
+          if (error.details) console.error('Details:', error.details)
+          if (error.hint) console.error('Hint:', error.hint)
+        }
 
         if (insertError) {
           console.error('Insert error:', insertError)
