@@ -1,6 +1,6 @@
 <template>
   <div v-if="loading" class="global-loader">
-    <div class="modal-spinner" />
+    <div class="modal-spinner"></div>
   </div>
 
   <div class="app-container">
