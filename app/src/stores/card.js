@@ -25,7 +25,7 @@ export const useCardsStore = defineStore('cards', {
       }
     },
 
-    async addCardToCollection(cardId, quantity = 1) {
+    async addCardToCollection(card, quantity = 1) {
       const {
         data: { user },
       } = await supabase.auth.getUser()
@@ -34,8 +34,9 @@ export const useCardsStore = defineStore('cards', {
         return
       }
 
-      console.log('User ID:', user.id)
-      console.log('Card ID:', cardId)
+      const cardId = card.id
+      const cardName = card.name
+      const cardImage = card.images?.small || card.imageUrl || ''
 
       const { data: existing, error: selectError } = await supabase
         .from('user_cards')
@@ -65,21 +66,17 @@ export const useCardsStore = defineStore('cards', {
           {
             user_id: user.id,
             card_id: cardId,
-            quantity: 1,
+            quantity,
+            card_name: cardName,
+            card_image: cardImage,
           },
           { onConflict: 'user_id,card_id' },
         )
 
         if (error) {
-          console.error('Supabase upsert error:', error.message)
-          if (error.details) console.error('Details:', error.details)
-          if (error.hint) console.error('Hint:', error.hint)
-        }
-
-        if (insertError) {
-          console.error('Insert error:', insertError)
+          console.error('Insert error:', error)
         } else {
-          console.log('Card inserted successfully', data)
+          console.log('Card inserted successfully:', data)
         }
       }
 
