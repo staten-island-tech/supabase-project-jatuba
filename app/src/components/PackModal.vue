@@ -4,7 +4,7 @@
       <h3>Your Pack</h3>
 
       <div v-if="loading" class="loader-container">
-        <div class="modal-spinner" />
+        <div class="modal-spinner"></div>
       </div>
 
       <ul v-else class="modal-results">
