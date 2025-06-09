@@ -6,6 +6,7 @@ import UserAuth from '../views/UserAuth.vue'
 import PkmnPacksView from '../views/PkmnPacksView.vue'
 import MainView from '../views/MainView.vue'
 import MainStore from '../views/MainStore.vue'
+import CollectionView from '@/views/CollectionView.vue'
 import { useUserStore } from '../stores/user'
 
 const routes = [
@@ -17,6 +18,7 @@ const routes = [
   { path: '/packs', name: 'Packs', component: PkmnPacksView },
   { path: '/main', component: MainView },
   { path: '/store', component: MainStore },
+  { path: '/collection', component: CollectionView },
 ]
 
 const router = createRouter({
