@@ -5,8 +5,11 @@
 
   <div class="app-container">
     <h1>Choose a Set</h1>
-    <button @click="$router.push('/')">Back to Home</button>
-    <button @click="logout">Logout</button>
+
+    <div class="button-group">
+      <button @click="$router.push('/')">Back to Home</button>
+      <button @click="logout">Logout</button>
+    </div>
 
     <div v-if="Object.keys(filteredGenerations).length">
       <div v-for="(sets, gen) in filteredGenerations" :key="gen" class="generation-section">
@@ -90,6 +93,13 @@ function handleOpenAnother() {
   text-align: center;
 }
 
+.button-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: center;
+}
+
 .generation-title {
   margin: 32px 0 16px;
   font-family: 'Handjet', sans-serif;
@@ -132,13 +142,6 @@ h1 {
   width: 60px;
   height: 60px;
   animation: spin 1s linear infinite;
-}
-
-.button-group {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  align-items: center;
 }
 
 @keyframes spin {

@@ -127,6 +127,7 @@ span {
   cursor: pointer;
   font-weight: bold;
   color: black;
+  width: 10rem;
   transition:
     background-color 0.2s,
     transform 0.2s;

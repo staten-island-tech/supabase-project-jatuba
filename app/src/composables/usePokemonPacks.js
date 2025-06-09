@@ -1,6 +1,7 @@
 import { ref } from 'vue'
 import { supabase } from '@/supabase'
 import { useUserStore } from '@/stores/user'
+import { useCardsStore } from '../stores/card'
 
 function categorizeCards(cards) {
   const categories = {
@@ -84,6 +85,11 @@ export function usePokemonPacks() {
 
   async function openPack(setId) {
     loading.value = true
+
+    const cardsStore = useCardsStore()
+    for (const card of opened) {
+      await cardsStore.addCardToCollection(card, 1)
+    }
 
     const usedIds = new Set()
     function getUniqueCard(pool) {

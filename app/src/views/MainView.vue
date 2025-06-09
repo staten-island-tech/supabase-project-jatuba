@@ -12,6 +12,10 @@
         <button>Visit the Store</button>
       </router-link>
 
+      <router-link to="/collection">
+        <button>Visit your Collection</button>
+      </router-link>
+
       <button @click="logout">Logout</button>
     </div>
   </div>
@@ -71,6 +75,7 @@ button {
   font-weight: 600;
   font-style: normal;
   row-gap: 2rem;
+  width: 15rem;
 }
 
 .button-group {
