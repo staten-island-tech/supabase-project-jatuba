@@ -86,11 +86,6 @@ export function usePokemonPacks() {
   async function openPack(setId) {
     loading.value = true
 
-    const cardsStore = useCardsStore()
-    for (const card of opened) {
-      await cardsStore.addCardToCollection(card, 1)
-    }
-
     const usedIds = new Set()
     function getUniqueCard(pool) {
       const available = pool.filter((card) => !usedIds.has(card.id))
