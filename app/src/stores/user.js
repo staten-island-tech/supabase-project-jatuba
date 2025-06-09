@@ -35,7 +35,7 @@ export const useUserStore = defineStore('user', {
 
         const { data: newProfile, error: insertError } = await supabase
           .from('profiles')
-          .insert([{ id: userId, credits: 750 }])
+          .insert([{ id: userId, credits: 500 }])
           .select()
           .single()
 

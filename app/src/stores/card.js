@@ -35,16 +35,12 @@ export const useCardsStore = defineStore('cards', {
       }
 
       const cardId = card.id
-      const cardName = card.name
-      const cardImage = card.images?.small || card.imageUrl || ''
 
       const { data: existing, error: selectError } = await supabase
         .from('user_cards')
         .select('*')
         .eq('user_id', user.id)
         .eq('card_id', cardId)
-        .eq('card_name', cardName)
-        .eq('card_image', cardImage)
         .maybeSingle()
 
       if (selectError) {
@@ -69,8 +65,6 @@ export const useCardsStore = defineStore('cards', {
             user_id: user.id,
             card_id: cardId,
             quantity,
-            card_name: cardName,
-            card_image: cardImage,
           },
           { onConflict: 'user_id,card_id' },
         )

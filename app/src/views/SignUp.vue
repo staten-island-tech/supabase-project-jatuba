@@ -49,6 +49,7 @@ export default {
         const { error: profileError } = await supabase.from('profiles').upsert({
           id: user.id,
           username: this.username,
+          credits: 500,
         })
       }
 
