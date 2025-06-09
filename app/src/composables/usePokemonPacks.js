@@ -1,7 +1,7 @@
 import { ref } from 'vue'
 import { supabase } from '@/supabase'
 import { useUserStore } from '@/stores/user'
-import { useCardsStore } from '../stores/card'
+import { useCardsStore } from '@/stores/card'
 
 function categorizeCards(cards) {
   const categories = {
@@ -85,7 +85,6 @@ export function usePokemonPacks() {
 
   async function openPack(setId) {
     loading.value = true
-
     const usedIds = new Set()
     function getUniqueCard(pool) {
       const available = pool.filter((card) => !usedIds.has(card.id))
@@ -123,19 +122,18 @@ export function usePokemonPacks() {
         opened.push(finalCard)
       }
 
+      console.log('Opened cards:', opened)
+
       const userStore = useUserStore()
+      await userStore.fetchUser() // Ensure user is fetched
       const userId = userStore.user?.id
+      console.log('User ID:', userId)
       if (!userId) throw new Error('User not logged in')
 
+      const cardsStore = useCardsStore()
       for (const card of opened) {
-        await supabase.from('user_cards').upsert(
-          {
-            user_id: userId,
-            card_id: card.id,
-            quantity: 1,
-          },
-          { onConflict: ['user_id', 'card_id'] },
-        )
+        console.log('Adding card to collection:', card)
+        await cardsStore.addCardToCollection(card, 1)
       }
 
       pack.value = opened
