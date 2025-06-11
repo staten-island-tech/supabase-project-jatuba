@@ -62,11 +62,33 @@ export function usePokemonPacks() {
       const data = await response.json()
       const sets = data.data
 
+      const normalizeSetName = (name) => {
+        return name
+          .replace(/\s+(Trainer Gallery|Galarian Gallery|Shiny Vault|Energies)$/i, '')
+          .trim()
+      }
+
       const grouped = {}
+
       for (const set of sets) {
         const gen = set.series || 'Others'
+        const normalized = normalizeSetName(set.name)
+
         if (!grouped[gen]) grouped[gen] = []
-        grouped[gen].push(set)
+
+        const existing = grouped[gen].find(s => s.normalizedName === normalized)
+
+        if (existing) {
+          existing.originalSetIds.push(set.id)
+        } else {
+          grouped[gen].push({
+            id: set.id,
+            name: normalized,
+            images: set.images,
+            normalizedName: normalized,
+            originalSetIds: [set.id],
+          })
+        }
       }
 
       generations.value = grouped
@@ -77,15 +99,10 @@ export function usePokemonPacks() {
     }
   }
 
-  async function fetchCardsForSet(setId) {
-    const response = await fetch(`https://api.pokemontcg.io/v2/cards?q=set.id:${setId}`)
-    const data = await response.json()
-    return data.data || []
-  }
-
   async function openPack(setId) {
     loading.value = true
     const usedIds = new Set()
+
     function getUniqueCard(pool) {
       const available = pool.filter((card) => !usedIds.has(card.id))
       const card = getRandomCard(available)
@@ -94,8 +111,18 @@ export function usePokemonPacks() {
     }
 
     try {
-      const cards = await fetchCardsForSet(setId)
-      const categorized = categorizeCards(cards)
+      const allSets = Object.values(generations.value).flat()
+      const matching = allSets.find(s => s.id === setId || s.originalSetIds?.includes(setId))
+      const setIdsToFetch = matching?.originalSetIds?.length ? matching.originalSetIds : [setId]
+
+      const allCards = []
+      for (const id of setIdsToFetch) {
+        const response = await fetch(`https://api.pokemontcg.io/v2/cards?q=set.id:${id}`)
+        const data = await response.json()
+        allCards.push(...(data.data || []))
+      }
+
+      const categorized = categorizeCards(allCards)
       const opened = []
 
       for (let i = 0; i < 5; i++) {
@@ -113,8 +140,8 @@ export function usePokemonPacks() {
       if (rareCard) opened.push(rareCard)
 
       const finalCard = getWeightedRandomCard(
-        rareOrHolo.filter((card) => !usedIds.has(card.id)),
-        categorized.ultraRare.filter((card) => !usedIds.has(card.id)),
+        rareOrHolo.filter(card => !usedIds.has(card.id)),
+        categorized.ultraRare.filter(card => !usedIds.has(card.id)),
         0.05,
       )
       if (finalCard) {
@@ -122,17 +149,13 @@ export function usePokemonPacks() {
         opened.push(finalCard)
       }
 
-      console.log('Opened cards:', opened)
-
       const userStore = useUserStore()
-      await userStore.fetchUser() // Ensure user is fetched
+      await userStore.fetchUser()
       const userId = userStore.user?.id
-      console.log('User ID:', userId)
       if (!userId) throw new Error('User not logged in')
 
       const cardsStore = useCardsStore()
       for (const card of opened) {
-        console.log('Adding card to collection:', card)
         await cardsStore.addCardToCollection(card, 1)
       }
 

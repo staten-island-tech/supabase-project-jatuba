@@ -2,7 +2,7 @@
   <div>
     <h1>Your Bag</h1>
     <div class="button-group">
-      <button @click="$router.push('/')">Back to Home</button>
+      <button @click="$router.push('/main')">Back to Home</button>
       <button @click="logout">Logout</button>
     </div>
 

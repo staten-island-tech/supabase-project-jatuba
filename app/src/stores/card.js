@@ -15,13 +15,43 @@ export const useCardsStore = defineStore('cards', {
 
       const { data, error } = await supabase
         .from('user_cards')
-        .select('card_id, quantity, cards(*), card_name, card_image')
+        .select('card_id, quantity')
         .eq('user_id', user.id)
 
       if (error) {
-        console.error('Fetch error:', error)
-      } else {
-        this.collection = data
+        console.error('Supabase fetch error:', error)
+        return
+      }
+
+      if (!data || data.length === 0) {
+        this.collection = []
+        return
+      }
+
+      const cardIds = data.map(entry => `id:${entry.card_id}`).join(' OR ')
+      try {
+        const response = await fetch(`https://api.pokemontcg.io/v2/cards?q=${encodeURIComponent(cardIds)}`)
+        const cardData = await response.json()
+        const apiCards = cardData.data
+
+        const collectionWithDetails = data.map(entry => {
+          const fullCard = apiCards.find(c => c.id === entry.card_id)
+          console.log('🔍 Full Card:', fullCard)
+
+          return {
+            card_id: entry.card_id,
+            quantity: entry.quantity,
+            card: {
+              name: fullCard?.name || 'Unknown',
+              image: fullCard?.images?.large || '',
+              generation: fullCard?.set?.series ?? fullCard?.set?.name ?? 'Other',
+            }
+          }
+        })
+
+        this.collection = collectionWithDetails
+      } catch (e) {
+        console.error('Failed to fetch card details from API:', e)
       }
     },
 
@@ -29,18 +59,13 @@ export const useCardsStore = defineStore('cards', {
       const {
         data: { user },
       } = await supabase.auth.getUser()
-      if (!user) {
-        console.error('No user logged in')
-        return
-      }
-
-      const cardId = card.id
+      if (!user) return
 
       const { data: existing, error: selectError } = await supabase
         .from('user_cards')
         .select('*')
         .eq('user_id', user.id)
-        .eq('card_id', cardId)
+        .eq('card_id', card.id)
         .maybeSingle()
 
       if (selectError) {
@@ -54,26 +79,18 @@ export const useCardsStore = defineStore('cards', {
           .update({ quantity: existing.quantity + quantity })
           .eq('id', existing.id)
 
-        if (updateError) {
-          console.error('Update error:', updateError)
-        } else {
-          console.log('Quantity updated successfully')
-        }
+        if (updateError) console.error('Update error:', updateError)
       } else {
-        const { data, error } = await supabase.from('user_cards').upsert(
+        const { error } = await supabase.from('user_cards').upsert(
           {
             user_id: user.id,
-            card_id: cardId,
+            card_id: card.id,
             quantity,
           },
-          { onConflict: 'user_id,card_id' },
+          { onConflict: 'user_id,card_id' }
         )
 
-        if (error) {
-          console.error('Insert error:', error)
-        } else {
-          console.log('Card inserted successfully:', data)
-        }
+        if (error) console.error('Insert error:', error)
       }
 
       await this.fetchCollection()
