@@ -3,7 +3,6 @@ import HomeView from '../views/HomeView.vue'
 import SignUp from '../views/SignUp.vue'
 import UserLogin from '../views/UserLogin.vue'
 import UserAuth from '../views/UserAuth.vue'
-import PkmnPacksView from '../views/PkmnPacksView.vue'
 import MainView from '../views/MainView.vue'
 import MainStore from '../views/MainStore.vue'
 import CollectionView from '@/views/CollectionView.vue'
@@ -15,7 +14,6 @@ const routes = [
   { path: '/signup', component: SignUp },
   { path: '/login', component: UserLogin },
   { path: '/auth', component: UserAuth },
-  { path: '/packs', name: 'Packs', component: PkmnPacksView },
   { path: '/main', component: MainView },
   { path: '/store', component: MainStore },
   { path: '/collection', component: CollectionView },

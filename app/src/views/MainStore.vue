@@ -15,6 +15,7 @@
     <div class="button-group">
       <button @click="$router.push('/main ')">Back to Home</button>
       <button @click="logout">Logout</button>
+      <button @click="addCredits">+100 Credits</button>
     </div>
 
     <div v-for="(sets, gen) in filteredGenerations" :key="gen" class="generation-section">
@@ -47,6 +48,7 @@ import { usePokemonPacks } from '@/composables/usePokemonPacks'
 import { useUserStore } from '@/stores/user'
 import PackModal from '@/components/PackModal.vue'
 import StoreCard from '@/components/StoreCard.vue'
+import { supabase } from '../supabase'
 
 const { generations, pack, showModal, loading, fetchAllSets, openPack } = usePokemonPacks()
 const userStore = useUserStore()
@@ -105,6 +107,23 @@ async function handleOpenAnother() {
   openPack(lastOpenedSetId.value).finally(() => {
     openingSetId.value = null
   })
+}
+
+async function addCredits() {
+  if (!userStore.profile) return
+
+  const newCredits = userStore.profile.credits + 100
+
+  const { error } = await supabase
+    .from('profiles')
+    .update({ credits: newCredits })
+    .eq('id', userStore.profile.id)
+
+  if (!error) {
+    userStore.profile.credits = newCredits
+  } else {
+    console.error('Failed to update credits:', error)
+  }
 }
 
 const generationPrices = {
