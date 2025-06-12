@@ -55,6 +55,7 @@ const userStore = useUserStore()
 
 const openingSetId = ref(null)
 const lastOpenedSetId = ref(null)
+const lastOpenedPrice = ref(null)
 
 function logout() {
   userStore.signOut()
@@ -85,6 +86,7 @@ async function handleOpenPack(setId, price) {
 
   openingSetId.value = setId
   lastOpenedSetId.value = setId
+  lastOpenedPrice.value = price
 
   openPack(setId).finally(() => {
     openingSetId.value = null
@@ -92,12 +94,9 @@ async function handleOpenPack(setId, price) {
 }
 
 async function handleOpenAnother() {
-  if (openingSetId.value || !lastOpenedSetId.value) return
+  if (openingSetId.value || !lastOpenedSetId.value || !lastOpenedPrice.value) return
 
-  const gen = pack.value?.series || ''
-  const price = generationPrices[gen] || 20
-
-  const canPurchase = await userStore.purchasePack(price)
+  const canPurchase = await userStore.purchasePack(lastOpenedPrice.value)
   if (!canPurchase) {
     alert("You don't have enough credits to buy another pack.")
     return
