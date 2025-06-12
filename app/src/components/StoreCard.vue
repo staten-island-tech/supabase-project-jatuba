@@ -1,15 +1,19 @@
 <template>
   <div class="set-card" ref="card">
-    <img :src="set.images.symbol" :alt="set.name" loading="lazy" />
-    <p>{{ set.name }}</p>
-    <button class="open-button" :disabled="isOpening" @click="$emit('open', price)">
-      <span v-if="isOpening">Opening...</span>
-      <span v-else>BUY Pack</span>
-    </button>
-    <slot>
+    <div class="card-top">
+      <img :src="set.images.symbol" :alt="set.name" loading="lazy" />
+    </div>
+    <div class="card-title">
+      <p>{{ set.name }}</p>
+    </div>
+    <div class="card-bottom">
+      <button class="open-button" :disabled="isOpening" @click="$emit('open', price)">
+        <span v-if="isOpening">Opening...</span>
+        <span v-else>BUY Pack</span>
+      </button>
       <h3>PURCHASE A PACK</h3>
-      <p class="cost">Price: ${{ price }}</p></slot
-    >
+      <p class="cost">Price: ${{ price }}</p>
+    </div>
   </div>
 </template>
 
@@ -61,62 +65,69 @@ onUnmounted(() => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: space-between;
   background-color: #2a2a2a;
   padding: 16px;
   border-radius: 8px;
   width: 220px;
-  text-align: center;
+  height: 370px;
   margin: 10px;
-  gap: 1rem;
+  text-align: center;
   opacity: 0;
   transition:
     transform 0.2s ease,
     box-shadow 0.2s ease;
 }
 
-.set-card:hover {
-  transform: scale(1.05);
-  box-shadow: 0 0 12px rgba(255, 165, 0, 0.6);
+.card-top {
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-img {
-  width: 70%;
-  height: auto;
-  margin-bottom: 10px;
+.card-top img {
+  max-height: 80px;
+  max-width: 100%;
 }
 
-p {
+.card-title {
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card-title p {
   color: white;
-  font-weight: bold;
-  font-family: 'Rajdhani', sans-serif;
   font-weight: 600;
-  font-style: normal;
+  font-family: 'Rajdhani', sans-serif;
+  margin: 0;
+}
+
+.card-bottom {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0.5rem;
+  padding-top: 1rem;
 }
 
 h3 {
   color: white;
-  font-weight: bold;
-  font-family: 'Rajdhani', sans-serif;
   font-weight: 600;
-  font-style: normal;
+  font-family: 'Rajdhani', sans-serif;
   font-size: 1rem;
-}
-
-span {
-  font-weight: bold;
-  font-family: 'Rajdhani', sans-serif;
-  font-weight: 600;
-  font-style: normal;
+  margin: 0;
 }
 
 .cost {
   color: orange;
-  font-weight: bold;
-  font-family: 'Rajdhani', sans-serif;
   font-weight: 600;
-  font-style: normal;
+  font-family: 'Rajdhani', sans-serif;
   font-size: 1.25rem;
+  margin: 0;
 }
 
 .open-button {
