@@ -2,7 +2,6 @@
   <div class="collection-container">
     <div v-if="loading" class="loading">Loading...</div>
     <div v-else>
-      <!-- Filter Dropdown -->
       <div class="filter">
         <label for="generation-select">Filter by Generation:</label>
         <select v-model="selectedGen" id="generation-select">
@@ -44,19 +43,17 @@ const { collection } = storeToRefs(cardsStore)
 const loading = ref(true)
 const selectedGen = ref('')
 
-// Extract unique generations
 const generations = computed(() => {
   const gens = new Set()
-  collection.value.forEach(card => {
+  collection.value.forEach((card) => {
     if (card.card.generation) gens.add(card.card.generation)
   })
   return Array.from(gens).sort()
 })
 
-// Filter based on selected generation
 const filteredCollection = computed(() => {
   if (!selectedGen.value) return collection.value
-  return collection.value.filter(card => card.card.generation === selectedGen.value)
+  return collection.value.filter((card) => card.card.generation === selectedGen.value)
 })
 
 onMounted(async () => {

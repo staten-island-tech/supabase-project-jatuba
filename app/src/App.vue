@@ -3,9 +3,7 @@ import { RouterView } from 'vue-router'
 </script>
 
 <template>
-  <div class="header">
-    <h1>POKEMON-PACK-OPENER</h1>
-  </div>
+  <h1>POKEMON-PACK-OPENER</h1>
   <router-view />
 </template>
 
@@ -22,7 +20,7 @@ h1 {
   font-family: 'Handjet', sans-serif;
   font-optical-sizing: auto;
   font-size: 85px;
-  color: orange;
-  margin: 0;
+  color: black;
+  text-align: center;
 }
 </style>
