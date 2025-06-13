@@ -22,16 +22,17 @@
       </div>
 
       <div v-else class="card-grid">
-        <div v-for="card in filteredCollection" :key="card.card_id" class="card-item">
-          <img :src="card.card.image" :alt="card.card.name" loading="lazy" />
-          <p class="card-name">{{ card.card.name }}</p>
-          <p class="card-generation">{{ card.card.generation }}</p>
-          <span class="card-quantity">x{{ card.quantity }}</span>
-        </div>
+        <div v-for="card in filteredCollection":key="card.card_id" class="card-item" :class="{ expanded: expandedCardId === card.card_id }" @click="toggleCard(card.card_id)">
+        <img :src="card.card.image" :alt="card.card.name" loading="lazy" />
+        <p class="card-name">{{ card.card.name }}</p>
+        <p class="card-generation">{{ card.card.generation }}</p>
+        <span class="card-quantity">x{{ card.quantity }}</span>
+      </div>
       </div>
     </div>
   </div>
 </template>
+
 
 <script setup>
 import { onMounted, ref, computed } from 'vue'
@@ -43,6 +44,11 @@ const { collection } = storeToRefs(cardsStore)
 const loading = ref(true)
 const selectedGen = ref('')
 
+const expandedCardId = ref(null)
+
+const toggleCard = (cardId) => {
+  expandedCardId.value = expandedCardId.value === cardId ? null : cardId
+}
 const generations = computed(() => {
   const gens = new Set()
   collection.value.forEach((card) => {
@@ -61,6 +67,7 @@ onMounted(async () => {
   loading.value = false
 })
 </script>
+
 
 <style scoped>
 .collection-container {
@@ -100,11 +107,25 @@ select {
   margin-top: 1rem;
 }
 
+.card-item:hover {
+  transform: scale(1.8);
+  z-index: 10;
+}
+
+.card-item.expanded {
+  transform: scale(3);
+  z-index: 5;
+}
 .card-item {
   border: 1px solid #ddd;
   border-radius: 8px;
   padding: 0.5rem;
   background-color: #f8f8f8;
+  transition:
+    transform 0.3s ease,
+    z-index 0.3s;
+  position: relative;
+  z-index: 1;
 }
 
 .card-item img {

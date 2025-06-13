@@ -17,6 +17,7 @@
   </div>
 </template>
 
+
 <script setup>
 defineProps({ set: Object, isOpening: Boolean, price: Number })
 
@@ -59,6 +60,7 @@ onUnmounted(() => {
   scrollTween?.kill()
 })
 </script>
+
 
 <style scoped>
 .set-card {

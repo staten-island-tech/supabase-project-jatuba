@@ -13,6 +13,7 @@
   </div>
 </template>
 
+
 <script>
 import { supabase } from '../supabase'
 
@@ -43,6 +44,7 @@ export default {
   },
 }
 </script>
+
 
 <style>
 h2 {

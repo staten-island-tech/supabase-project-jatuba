@@ -42,17 +42,19 @@
   </div>
 </template>
 
+
 <script setup>
 import { onMounted, ref, computed } from 'vue'
 import { usePokemonPacks } from '@/composables/usePokemonPacks'
 import { useUserStore } from '@/stores/user'
+import { supabase } from '../supabase'
+
 import PackModal from '@/components/PackModal.vue'
 import StoreCard from '@/components/StoreCard.vue'
-import { supabase } from '../supabase'
+
 
 const { generations, pack, showModal, loading, fetchAllSets, openPack } = usePokemonPacks()
 const userStore = useUserStore()
-
 const openingSetId = ref(null)
 const lastOpenedSetId = ref(null)
 const lastOpenedPrice = ref(null)
@@ -69,11 +71,6 @@ const filteredGenerations = computed(() => {
   return result
 })
 
-onMounted(async () => {
-  await fetchAllSets()
-  await userStore.fetchUser()
-  console.log('Loaded user profile:', userStore.profile)
-})
 
 async function handleOpenPack(setId, price) {
   if (openingSetId.value) return
@@ -129,19 +126,26 @@ const generationPrices = {
   Base: 500,
   Neo: 300,
   EX: 250,
+  POP: 15,
+  Platinum: 100,
+  XY: 100,    
+  Gym: 100,
   'Diamond & Pearl': 200,
   'Black & White': 150,
-  XY: 100,
   'Sun & Moon': 25,
   'Sword & Shield': 10,
   'Scarlet & Violet': 10,
   'E-Card': 200,
-  POP: 15,
-  Platinum: 100,
   'HeartGold & SoulSilver': 100,
-  Gym: 100,
 }
+
+onMounted(async () => {
+  await fetchAllSets()
+  await userStore.fetchUser()
+  console.log('Loaded user profile:', userStore.profile)
+})
 </script>
+
 
 <style>
 .app-container {

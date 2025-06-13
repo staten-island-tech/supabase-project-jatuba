@@ -1,3 +1,11 @@
+<template>
+  <div>
+    <h2>Confirming...</h2>
+    <p>Please wait while we complete your login.</p>
+  </div>
+</template>
+
+
 <script setup>
 import { supabase } from '../supabase'
 import { useRouter } from 'vue-router'
@@ -23,9 +31,3 @@ onMounted(async () => {
 })
 </script>
 
-<template>
-  <div>
-    <h2>Confirming...</h2>
-    <p>Please wait while we complete your login.</p>
-  </div>
-</template>

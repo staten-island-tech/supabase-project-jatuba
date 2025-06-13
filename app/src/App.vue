@@ -20,7 +20,7 @@ h1 {
   font-family: 'Handjet', sans-serif;
   font-optical-sizing: auto;
   font-size: 85px;
-  color: black;
+  color: orange;
   text-align: center;
 }
 </style>

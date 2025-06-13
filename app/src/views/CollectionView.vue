@@ -9,9 +9,11 @@
   </div>
 </template>
 
+
 <script setup>
 import CollectionPage from '@/components/CollectionPage.vue'
 </script>
+
 
 <style scoped>
 .button-group {
